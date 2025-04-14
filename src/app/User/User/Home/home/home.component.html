@@ -1,0 +1,230 @@
+<!-- Main News-->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Ảnh lớn bên trái -->
+        <div class="col-lg-7 px-0">
+            <div class="position-relative overflow-hidden" style="height: 450px; ">
+                <img *ngIf="top5NewsEvents.length > 0" class="img-fluid" style="object-fit: cover; width: 100%;"
+                    [src]="getImageUrlWithFallback(top5NewsEvents[0], 'image')"
+                    (error)="handleImageError($event, top5NewsEvents[0], 'image')" alt="news image">
+                <div class="overlay">
+                    <div class="mb-2">
+                        <a *ngIf="top5NewsEvents.length > 0" class="text-white p-2" style="text-decoration: none; ">
+                            {{ top5NewsEvents[0].create_at | date: 'dd/MM/yyyy' }}
+                        </a>
+                    </div>
+                    <a *ngIf="top5NewsEvents.length > 0" class="h4 p-2 title-news text-white font-weight-bold"
+                        [href]="'/news-detail/' + [formatName(top5NewsEvents[0].title)] ">
+                        {{ top5NewsEvents[0].title }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 ảnh nhỏ bên phải -->
+        <div class="col-lg-5 px-0">
+            <div class="row right-news-container">
+                <div *ngFor="let news of top5NewsEvents.slice(1, 5)" class="right-news">
+                    <div class="position-relative overflow-hidden" style="height: 220px;">
+                        <img class="img-fluid" [src]="getImageUrlWithFallback(news, 'image')"
+                            (error)="handleImageError($event, news, 'image')" alt="news image"
+                            style="object-fit: cover;">
+                        <div class="overlay">
+                            <div class="mb-2">
+                                <a class="text-white p-2" style="text-decoration: none; ">
+                                    {{ news.create_at | date: 'dd/MM/yyyy' }}
+                                </a>
+                            </div>
+                            <a class="h6 p-2 title-news text-white font-weight-bold"
+                                [routerLink]="['/news-detail', formatName(news.title)]">
+                                {{ news.title }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main News-->
+
+<!-- Featured News Slider Start -->
+<div class="container-fluid pt-5 mb-3">
+    <div class="container">
+        <div class="section-title text-center mb-4">
+            <h4 class="m-0 text-uppercase font-weight-bold">Tin tức nổi bật</h4>
+        </div>
+        <div class="row">
+            <div *ngFor="let news of tophot" class="col-md-3">
+                <div class="news-card rounded overflow-hidden position-relative" style="height: 300px;">
+                    <img class="img-fluid h-100 w-100" [src]="getImageUrlWithFallback(news, 'image')"
+                        (error)="handleImageError($event, news, 'image')" alt="" style="object-fit: cover;">
+                    <div class="overlay d-flex flex-column justify-content-end p-3">
+                        <div class="mb-2 d-flex align-items-center">
+                            <!-- <a class="badge badge-warning text-uppercase font-weight-semi-bold p-2 mr-2" href="">{{ news.id_category }}</a> -->
+                            <a class="text-white"><small>{{ news.create_at | date:'dd/MM/yyyy' }}</small></a>
+                        </div>
+                        <a class=" title-news m-0 text-white text-uppercase font-weight-semi-bold"
+                            [routerLink]="['/news-detail', formatName(news.title)]">{{ news.title }}</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Featured News Slider End -->
+
+
+<!-- News With Sidebar Start -->
+<div class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-title">
+                            <h4 class="m-0 text-uppercase font-weight-bold">Danh sách tin tức-sự kiện</h4>
+                            <!-- <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a> -->
+                        </div>
+                    </div>
+                    <div *ngFor="let news of displayedNews" class="col-lg-6">
+                        <div class="position-relative mb-3">
+                            <img class="img-fluid w-100" [src]="getImageUrlWithFallback(news, 'image')"
+                                (error)="handleImageError($event, news, 'image')" alt=""
+                                style="border: 0.25px solid rgb(199, 199, 199); height: 300px; object-fit: cover;">
+                            <div class="bg-white border border-top-0 p-3" style="height: 100px;">
+                                <div class="mb-0">
+                                    <a class="text-body mt-0" style="text-decoration: none;"><small>{{ news.create_at |
+                                            date:'dd/MM/yyyy' }}</small></a>
+                                </div>
+                                <a class=" title-news m-0 text-body text-uppercase font-weight-semi-bold"
+                                    [routerLink]="['/news-detail', formatName(news.title)]">{{ news.title }}
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav *ngIf="listNewsEvents.length > 0">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" [class.disabled]="currentPageNews === 1">
+                                <a class="page-link" (click)="changePageNews(currentPageNews - 1)"
+                                    aria-label="Previous">&laquo;</a>
+                            </li>
+                            <li *ngFor="let page of [].constructor(getTotalPagesNews()); let i = index"
+                                class="page-item" [class.active]="currentPageNews === i + 1">
+                                <a class="page-link" (click)="changePageNews(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPageNews === getTotalPagesNews()">
+                                <a class="page-link" (click)="changePageNews(currentPageNews + 1)"
+                                    aria-label="Next">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <!-- 
+                    <div class="col-lg-12 mb-3">
+                        <a href=""><img class="img-fluid w-100" src="assets/img/ads-728x90.png" alt="hinh"></a>
+                    </div> -->
+
+                    <div class="col-lg-12">
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item" *ngFor="let category of categoriesDoc">
+                                <a class="nav-link text-uppercase fw-bold"
+                                    [class.active]="selectedCategory === category.name_category_document"
+                                    (click)="selectCategoryDoc(category.name_category_document)">
+                                    {{ category.name_category_document }}
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Table -->
+                        <div class="mt-3">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tên Văn Bản</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let doc of displayedDocs">
+                                        <td>
+                                            <a [routerLink]="['document-detail', formatName(doc.title)]"
+                                                class="text-decoration-none" style="color: black">
+                                                {{ doc.title }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav *ngIf="displayedDocs.length > 0">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="currentPageDocs === 1">
+                                    <a class="page-link" (click)="changePageDocs(currentPageDocs - 1)"
+                                        aria-label="Previous">&laquo;</a>
+                                </li>
+                                <li *ngFor="let page of [].constructor(getTotalPagesDocs()); let i = index"
+                                    class="page-item" [class.active]="currentPageDocs === i + 1">
+                                    <a class="page-link" (click)="changePageDocs(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageDocs === getTotalPagesDocs()">
+                                    <a class="page-link" (click)="changePageDocs(currentPageDocs + 1)"
+                                        aria-label="Next">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Popular News Start -->
+                <div class="mb-3">
+                    <div class="section-title mb-0">
+                        <h4 class="m-0 text-uppercase font-weight-bold">Tin mới nhất</h4>
+                    </div>
+                    <div class="bg-white border border-top-0 p-3">
+                        <div *ngFor="let news of top5NewsEvents"
+                            class="d-flex align-items-center bg-white mb-3 custom-news-container">
+                            <img class="img-fluid" [src]="getImageUrlWithFallback(news, 'image')"
+                                (error)="handleImageError($event, news, 'image')" alt="news image"
+                                style="height: 110px; width: 110px; object-fit: cover;">
+                            <div class="w-100 h-100 px-3 d-flex flex-column justify-content-start border border-left-0">
+                                <div class="mb-2">
+                                    <!-- <a class="badge badge-primary text-uppercase font-weight-semi-bold p-1 mr-2" href="">
+                                        {{ news.id_category }}
+                                    </a> -->
+                                    <a class="text-body mt-0" style="text-decoration: none;">
+                                        <small>{{ news.create_at | date: 'dd/MM/yyyy' }}</small>
+                                    </a>
+                                </div>
+                                <a class="m-0 title-news" style="text-decoration: none; "
+                                    [routerLink]="['/news-detail', formatName(news.title)]">{{ news.title }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Popular News End -->
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- News With Sidebar End -->
+
+
+<button type="button" class="btn btn-primary btn-square back-to-top" title="Quay lại đầu trang" (click)="scrollToTop()"
+    [ngStyle]="{ display: showBackToTop ? 'block' : 'none' }">
+    <i class="bi bi-arrow-up"></i>
+</button>
+

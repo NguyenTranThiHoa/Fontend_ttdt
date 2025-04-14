@@ -1,0 +1,19 @@
+.title-intro {
+    color: black;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* Cho trình duyệt WebKit như Chrome, Edge */
+    line-clamp: 2;
+    /* Thuộc tính chuẩn (mặc dù chưa được nhiều trình duyệt hỗ trợ) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    white-space: normal;
+    max-height: 3em;
+    text-decoration: none;
+}
+
+.title-intro:hover {
+    color: blue;
+}

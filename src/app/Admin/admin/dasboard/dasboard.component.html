@@ -1,0 +1,120 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <h4 class="page-header" style="text-align: center;">
+            <strong><em>THỐNG KÊ SỐ LƯỢNG</em></strong>
+        </h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white mb-3" style="background-color: rgb(58, 96, 162);">
+          <div class="card-header" style="font-weight: bold;">GIỚI THIỆU</div>
+          <div class="card-body d-flex align-items-center">
+            <i class="bi bi-bar-chart-line" style="padding: 0px 20px;"></i>
+            <h3 class="card-title me-2" style="margin-left: 20px;">{{ statistics.totalIntroduces }}</h3>
+          </div>
+          <div class="card-footer" style="background-color: #fff;">
+            <a routerLink="/admin/app-categories-introduce" class="btn btn-primary" style="background-color: rgb(58, 96, 162);"><i class="bi bi-arrow-right"  style="padding: 0px 10px;"></i>Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white mb-3" style="background-color: rgb(58, 162, 112);">
+          <div class="card-header" style="font-weight: bold;">TIN TỨC - SỰ KIỆN</div>
+          <div class="card-body d-flex align-items-center">
+            <i class="bi bi-calendar-event" style="padding: 0px 20px;"></i>
+            <h3 class="card-title me-2" style="margin-left: 20px;">{{ statistics.totalNewEvents }}</h3>
+          </div>
+          <div class="card-footer" style="background-color: #fff;">
+            <a routerLink="/admin/app-categories" class="btn btn-primary" style="background-color: rgb(58, 162, 112);"><i class="bi bi-arrow-right"  style="padding: 0px 10px;"></i>Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white mb-3" style="background-color: rgb(150, 158, 63);">
+          <div class="card-header" style="font-weight: bold;">VĂN BẢN - PHÁP LUẬT</div>
+          <div class="card-body d-flex align-items-center">
+            <i class="bi bi-file-earmark-text" style="padding: 0px 20px;"></i>
+            <h3 class="card-title me-2" style="margin-left: 20px;">{{ statistics.totalDocuments }}</h3>
+          </div>
+          <div class="card-footer" style="background-color: #fff;">
+            <a routerLink="/admin/app-categories-documents" class="btn btn-primary" style="background-color: rgb(150, 158, 63);"><i class="bi bi-arrow-right"  style="padding: 0px 10px;"></i>Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white mb-3" style="background-color: rgb(179, 78, 78);">
+          <div class="card-header" style="font-weight: bold;">THỦ TỤC HÀNH CHÍNH</div>
+          <div class="card-body d-flex align-items-center">
+            <i class="bi bi-list-task" style="padding: 0px 20px;"></i>
+            <h3 class="card-title me-2" style="margin-left: 20px;">{{ statistics.totalProcedure }}</h3>
+          </div>
+          <div class="card-footer" style="background-color: #fff;">
+            <a routerLink="/admin/app-categories-field" class="btn btn-primary" style="background-color: rgb(179, 78, 78);"><i class="bi bi-arrow-right"  style="padding: 0px 10px;"></i>Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Biểu đồ thống kê (Bên trái) -->
+    <div class="col-md-3">
+      <div class="card shadow-lg">
+        <div class="card-header fw-bold bg-primary text-white">
+          📊 THỐNG KÊ BÀI VIẾT
+        </div>
+        <div class="card-body d-flex justify-content-center">
+          <canvas id="statisticsChart" style="max-width: 100%; height: auto;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-header fw-bold bg-warning text-white">
+          📈 LƯỢT XEM BÀI VIẾT THEO NGÀY
+        </div>
+        <div class="card-body d-flex justify-content-center">
+          <canvas id="viewsOverTimeChart" style="max-width: 100%; max-height: 400px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5" style="padding: 20px 10px;">
+      <div class="card shadow-lg">
+        <div class="card-header fw-bold bg-success text-white">
+          📊 LƯỢT XEM DANH MỤC BÀI VIẾT TIN TỨC
+        </div>
+        <div class="card-body d-flex justify-content-center">
+          <canvas id="categoryChart" style="max-width: 100%; max-height: 400px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bài viết xem nhiều nhất (Bên phải) -->
+    <div class="col-md-5" style="padding: 20px 10px;">
+      <div class="card shadow-lg ">
+        <div class="card-header fw-bold bg-primary text-white">
+          🔥 BÀI VIẾT XEM NHIỀU NHẤT
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let news of newEvents">
+            <img *ngIf="news.image" [src]="'https://api.ttdt2503.id.vn/api/images/' + news.image"
+              style="width: 80px; height: auto;">
+            <a [href]="'http://ttdt2503.id.vn/news-detail/'+ [formatName(news.title)]" target="_blank" class="text-dark fw-bold" style="text-decoration: none;">
+              {{ news.title }}
+            </a>
+            <div class="d-flex justify-content-between align-items-center text-muted">
+              <small>{{ news.create_at | date:'dd/MM/yyyy' }}</small>
+              <span><i class="bi bi-eye-fill"></i> {{ news.view }} lượt xem</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

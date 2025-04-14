@@ -1,0 +1,98 @@
+/* Định dạng container chính */
+.container {
+    margin: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 150px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+
+/* Tabs điều hướng */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #f8f9fa;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.tabs button.active {
+    background: #007bff;
+    color: white;
+}
+
+/* Nội dung hiển thị */
+.content {
+    padding: 0px;
+    padding-top: 20px;
+    overflow-x: auto;
+    /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+/* Định dạng bảng */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* Cố định bố cục bảng */
+}
+
+/* Định dạng ô trong bảng */
+.detail-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Định dạng cột tiêu đề (label) */
+.label {
+    width: 20%;
+    font-weight: bold;
+    background: #f2f2f2;
+    white-space: nowrap;
+    /* Ngăn không cho xuống dòng */
+}
+
+/* Định dạng cột nội dung (phần văn bản dài) */
+.detail-table td:last-child {
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu nội dung quá dài */
+}
+
+/* Định dạng tên thủ tục */
+.procedure-name {
+    font-weight: bold;
+    color: red;
+}
+
+/* Thêm responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .label {
+        width: 40%;
+        /* Điều chỉnh độ rộng của nhãn để phù hợp trên mobile */
+    }
+
+    .detail-table td:last-child {
+        max-width: 60%;
+    }
+}
+
+.content {
+    text-align: justify;
+    word-break: break-word;
+    line-height: 1.6;
+}

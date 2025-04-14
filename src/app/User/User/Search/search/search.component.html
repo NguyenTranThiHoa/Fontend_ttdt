@@ -1,0 +1,93 @@
+<div class="container mt-3 d-flex flex-column align-items-center">
+
+    <div class="input-group mb-3 col-md-9 mx-auto">
+        <input type="text" class="form-control" placeholder="Nhập từ khóa..." [(ngModel)]="searchText"
+            (keyup.enter)="search()">
+        <button class="btn btn-primary" (click)="searchData()">Tìm kiếm</button>
+    </div>
+
+    <!-- Introduce -->
+    <div *ngIf="filteredIntroduces.length > 0" class="w-100">
+        <h3 class="text-center">Giới thiệu</h3>
+        <div *ngFor="let intro of filteredIntroduces" class="card mb-3 col-md-9 mx-auto no-border">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img *ngIf="intro.image_url" [src]="getImageUrlWithFallback(intro, 'image_url')"
+                        (error)="handleImageError($event, intro, 'image_url')" class="img-fluid rounded-start"
+                        alt="Ảnh giới thiệu"
+                        style="height: 200px; width: 100%; object-fit: cover; border-radius: 10px;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a [routerLink]="['/introduce-detail',formatName(intro.name_introduce)]">
+                                {{ intro.name_introduce }}
+                            </a>
+                        </h5>
+                        <p class="card-text fst-italic">Danh mục: <b>{{ intro.categoryName }}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News & Events -->
+    <div *ngIf="filteredNews.length > 0" class="w-100">
+        <h3 class="text-center">Tin tức & Sự kiện</h3>
+        <div *ngFor="let news of filteredNews" class="card mb-3 col-md-9 mx-auto no-border">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <!-- <img [src]="'https://api.ttdt03.id.vn/api/images/' + news.image" class="img-fluid rounded-start"
+                        alt="Ảnh tin tức" style="height: 200px; width: 100%; object-fit: cover; border-radius: 10px;"> -->
+                    <img *ngIf="news.image" [src]="getImageUrlWithFallback(news, 'image')"
+                        (error)="handleImageError($event, news, 'image')" class="img-fluid rounded-start"
+                        alt="Ảnh tin tức" style="height: 200px; width: 100%; object-fit: cover; border-radius: 10px;" />
+
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a [routerLink]="['/news-detail',formatName(news.title)]">
+                                {{ news.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text fst-italic">Danh mục: <b>{{ news.categoryName }}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents -->
+    <div *ngIf="filteredDocuments.length > 0" class="w-100">
+        <h3 class="text-center">Văn bản-Pháp luật</h3>
+        <div *ngFor="let doc of filteredDocuments" class="card mb-3 col-md-9 mx-auto no-border">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a [routerLink]="['/document-detail',formatName(doc.title)]">
+                        {{ doc.title }}
+                    </a>
+                </h5>
+                <p class="card-text fst-italic">Danh mục: <b>{{ doc.categoryName }}</b></p>
+                <p class="card-text">{{ doc.description_short}}</p>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Procedures -->
+    <div *ngIf="filteredProcedures.length > 0;" class="w-100">
+        <h3 class="text-center">Thủ tục hành chính</h3>
+        <div *ngFor="let proc of filteredProcedures" class="card mb-3 col-md-9 mx-auto no-border">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a [routerLink]="['/procedures',proc.id_thutuc]">
+                        {{ proc.name_procedures }}
+                    </a>
+                </h5>
+                <p class="card-text fst-italic">Danh mục: <b>{{ proc.categoryName }}</b></p>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

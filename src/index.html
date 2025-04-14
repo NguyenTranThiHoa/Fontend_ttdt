@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<style>
+  .card-text img {
+    max-width: 100% !important;
+    /* Ảnh không vượt quá khung */
+    height: auto !important;
+    /* Giữ tỉ lệ ảnh */
+    display: block;
+    /* Giúp căn giữa ảnh */
+    margin: 10px auto;
+    /* Căn giữa ảnh */
+    object-fit: contain;
+    /* Đảm bảo ảnh không bị cắt */
+  }
+</style>
+<style>
+  .card-text table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .card-text th,
+  .card-text td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .card-text th {
+    background-color: #f4f4f4;
+  }
+
+/* Đảm bảo bảng từ Quill hiển thị đầy đủ */
+.quill-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ql-editor {
+    font-size: inherit;
+    color: inherit;
+}
+
+.quill-content th,
+.quill-content td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.quill-content th {
+  background-color: #f4f4f4;
+}
+
+</style>
+
+<body>
+  <app-root></app-root>
+</body>
+</html>

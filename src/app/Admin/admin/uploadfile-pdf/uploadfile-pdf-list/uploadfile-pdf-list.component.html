@@ -1,0 +1,436 @@
+<div class="container mt-4">
+    <h2 class="mb-3" style="text-align: center; font-weight: bold;">DANH SÁCH PDF</h2>
+
+    <!-- Thông báo -->
+    <div *ngIf="successMessage" class="alert alert-success alert-border-left alert-dismissible fade show" role="alert">
+        <i class="ri-check-line me-2 align-middle"></i>
+        <strong>Thành công: </strong> {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage=''"></button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+        <i class="ri-error-warning-line me-2 align-middle"></i>
+        <strong>Lỗi: </strong> {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage=''"></button>
+    </div>
+
+    <div class="controls mb-3 p-3" style="background-color: #ffffff;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <!-- Search Box -->
+            <div class="search-box flex-grow-1 flex-md-grow-0">
+                <div class="input-group">
+                    <input type="search" placeholder="Tìm kiếm" [(ngModel)]="searchQuery">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-primary" (click)="openCreateModaPdfl()">
+                    <i class="bi bi-folder-plus"></i> Tạo thư mục Pdf
+                </button>
+                <button class="btn btn-warning" (click)="openEditModalPdf()" [disabled]="!selectedFolder">
+                    <i class="bi bi-pencil-square"></i> Đổi tên thư mục
+                </button>
+                <button class="btn btn-danger" (click)="deleteFolderPdf()" [disabled]="!selectedFolder">
+                    <i class="bi bi-trash"></i> Xóa thư mục
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Upload Pdf -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="mb-3">Upload File Pdf</h5>
+        <form (ngSubmit)="uploadPdf()">
+            <div class="row g-3">
+                <!-- Chọn PDF -->
+                <div class="col-md-5">
+                    <label for="pdfFile" class="form-label fw-bold">Chọn file PDF</label>
+                    <input type="file" class="form-control" id="pdfFile" (change)="onPdfSelected($event)" accept="application/pdf"
+                        name="pdfFile" required />
+                
+                    <!-- Hiển thị thông báo lỗi nếu chọn sai file -->
+                    <div *ngIf="errorMessage" class="text-danger mt-2">
+                        <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+                    </div>
+                </div>
+
+                <!-- Chọn thư mục -->
+                <div class="col-md-5">
+                    <div class="mb-3" style="padding: 0px 10px;">
+                        <label for="folderId" class="form-label" style="font-weight: bold;">Chọn thư mục</label>
+                        <select class="form-select" [(ngModel)]="selectedFolderId" name="folderId" required>
+                            <option [value]="null">Không có cha (Cấp cao nhất)</option>
+                            <ng-container *ngFor="let folder of folderPdf">
+                                <option [value]="folder.id_folder_pdf">{{ folder.name_folder }}</option>
+                                <ng-container *ngIf="folder.children && folder.children.length > 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="categoryOptions; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                                </ng-container>
+                            </ng-container>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Nút tải lên -->
+                <div class="col-md-2" style="padding: 30px">
+                    <button class="btn btn-success w-100" style="padding: 5px 20px;" type="submit">
+                        <i class="bi bi-file-earmark-arrow-up"></i>Tải lên
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Template đệ quy cho dropdown -->
+    <ng-template #categoryOptions let-children="$implicit" let-level="level">
+        <ng-container *ngFor="let child of children">
+            <option [value]="child.id_folder_pdf">{{ '—'.repeat(level * 3) }} {{ child.name_folder }}</option>
+            <ng-container *ngIf="child.children && child.children.length > 0">
+                <ng-container
+                    *ngTemplateOutlet="categoryOptions; context: { $implicit: child.children, level: level + 1 }"></ng-container>
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold">Thư mục</h5>
+                <ul class="folder-tree">
+                    <ng-container *ngFor="let folder of folderPdf">
+                        <li class="folder-item" [ngClass]="{'active': folder.id_folder_pdf === activeFolderId}"
+                            (click)="selectFolder(folder)" (click)="toggleFolder(folder)">
+                            <span class="folder-icon">
+                                <i class="bi"
+                                    [ngClass]="{'bi-folder': !folder.isExpanded, 'bi-folder2-open': folder.isExpanded}"></i>
+                            </span>
+                            <span class="folder-name" (click)="selectFolder(folder)">{{ folder.name_folder }}</span>
+                            <span class="badge bg-primary">{{ folder.children.length || 0 }}</span>
+                        </li>
+                        <ng-container *ngIf="folder.children && folder.children.length > 0 && folder.isExpanded">
+                            <ng-container
+                                *ngTemplateOutlet="recursiveFolder; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                        </ng-container>
+                    </ng-container>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cột danh sách Pdf -->
+        <div class="col-md-8">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold d-flex align-items-center">
+                    File PDF trong thư mục:
+                    <p class="mb-0 ms-2" style="font-weight: 500; font-family: 'Times New Roman', Times, serif;">{{
+                        selectedFolder?.name_folder || 'Chưa chọn thư mục' }}</p>
+                </h5>
+                <div class="table-responsive" style="padding: 0px 20px">
+                    <table class="table table-striped table-bordered" *ngIf="filteredPostPdf.length > 0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên File Pdf</th>
+                                <th>File Path</th>
+                                <th>Thư Mục</th>
+                                <th>Ngày Tạo</th>
+                                <th>Hành động</th>
+                                <th>Xem file</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let pdf of filteredPostPdf | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ pdf.fileName }}</td>
+                                <td>
+                                    {{ pdf.filePath}}
+                                </td>
+                                <td>{{ getCategoryFullName(pdf) }}</td>
+                                <td>{{ pdf.uploadedAt | date: 'dd-MM-yyyy'}}</td>
+                                <td>
+                                    <!-- Nút Xóa -->
+                                    <button class="btn btn-danger btn-sm me-2"
+                                        (click)="openDeletePdfModal(pdf.id_pdf)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <!-- Nút Sửa -->
+                                    <button class="btn btn-primary btn-sm me-2" (click)="openEditPdfModal(pdf)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-sm me-2" (click)="openMovePdfModal(pdf.id_pdf)">
+                                        <i class="bi bi-arrows-move"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <!-- Nút Xem -->
+                                    <button class="btn btn-secondary btn-sm" (click)="openViewPdfModal(pdf)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="filteredPostPdf.length === 0" class="text-center">Không có hình ảnh nào.</div>
+                </div>
+
+                <!-- Phân trang -->
+                <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        <li class="page-item" [class.disabled]="page === 1">
+                            <a class="page-link" (click)="page = page - 1">&laquo;</a>
+                        </li>
+                        <li class="page-item" *ngFor="let p of getPaginationArray()" [class.active]="page === p">
+                            <a class="page-link" (click)="page = p">{{ p }}</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="page === totalPages">
+                            <a class="page-link" (click)="page = page + 1">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template đệ quy cho danh sách thư mục con -->
+<ng-template #recursiveFolder let-folders="$implicit" let-level="level">
+    <ul class="sub-folder-tree" [style.margin-left.px]="level * 20">
+        <ng-container *ngFor="let folder of folders">
+            <li class="folder-item" [ngClass]="{'active': folder.id_folder_pdf === activeFolderId}"
+                (click)="selectFolder(folder)" (click)="toggleFolder(folder)">
+                <span class="folder-icon">
+                    <i class="bi"
+                        [ngClass]="{'bi-folder': !folder.isExpanded, 'bi-folder2-open': folder.isExpanded}"></i>
+                </span>
+                <span class="folder-name" (click)="selectFolder(folder)">{{ folder.name_folder }}</span>
+                <span class="badge bg-primary">{{ folder.children?.length || 0 }}</span>
+            </li>
+            <ng-container *ngIf="folder.children && folder.children.length > 0 && folder.isExpanded">
+                <ng-container
+                    *ngTemplateOutlet="recursiveFolder; context: { $implicit: folder.children, level: level + 1 }"></ng-container>
+            </ng-container>
+        </ng-container>
+    </ul>
+</ng-template>
+
+<!-- Modal Chung cho Tạo và Đổi Tên Thư Mục -->
+<div class="modal fade" id="folderModalpdf" data-bs-backdrop="static" tabindex="-1" aria-labelledby="folderModalLabel">
+    <div class="modal-dialog modal-lg" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"
+                    style="justify-content: center; font-weight: bold; font-family: 'Times New Roman', Times, serif; padding: 0px 100px;"
+                    id="folderModalLabel">
+                    {{ isEditMode ? 'SỬA' : 'THÊM' }} THƯ MỤC PDF
+                </h4>
+                <button type="button" class="btn-close" (click)="hideModal(getModalInstance('folderModalpdf'))"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Hiển thị thông báo lỗi -->
+                <div *ngIf="errorMessage" class="alert alert-danger text-center">
+                    {{ errorMessage }}
+                </div>
+
+                <form (ngSubmit)="saveFolderPdf()">
+                    <div class="mb-3">
+                        <label for="name_folder" class="form-label" style="font-weight: bold;">Tên thư mục</label>
+                        <input type="text" class="form-control" [(ngModel)]="folderPdfForm.name_folder" name="name_folder" required
+                            placeholder="Nhập tên thư mục...." />
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label>
+                        <select class="form-control" [(ngModel)]="folderPdfForm.parentId" name="parentId">
+                            <option [value]="null">Không có cha (Cấp cao nhất)</option>
+                            <ng-container *ngFor="let folder of folderPdf">
+                                <option [value]="folder.id_folder_pdf">{{ getFolderFullName(folder, 0) }}</option>
+                                <ng-container *ngIf="folder.children && folder.children.length > 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="folderOptions; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                                </ng-container>
+                            </ng-container>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary me-2" style="padding: 5px 30px; margin-left: 260px;">
+                        <i class="bi bi-save" style="padding: 0px 10px;"></i>{{ isEditMode ? 'Cập nhật' : 'Lưu' }}
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    (click)="hideModal(getModalInstance('folderModalpdf'))">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #folderOptions let-folders="$implicit" let-level="level">
+    <ng-container *ngFor="let folder of folders">
+        <option [value]="folder.id_folder_pdf">{{ getFolderFullName(folder, level) }}</option>
+        <ng-container *ngIf="folder.children && folder.children.length > 0">
+            <ng-container
+                *ngTemplateOutlet="folderOptions; context: { $implicit: folder.children, level: level + 1 }"></ng-container>
+        </ng-container>
+    </ng-container>
+</ng-template>
+
+<!-- Modal Xóa Thư Mục -->
+<div class="modal fade" id="deleteFolderModalPdf" tabindex="-1" aria-labelledby="deleteFolderModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFolderModalLabel">Xác nhận xóa thư mục</h5>
+                <button type="button" class="btn-close"
+                    (click)="hideModal(getModalInstance('deleteFolderModalPdf'))"></button>
+                <button type="button" class="btn-close" (click)="hideModal(getModalInstance('deleteFolderModalPdf'))"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa thư mục này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    (click)="hideModal(getModalInstance('deleteFolderModalPdf'))">Hủy</button>
+                <button type="button" class="btn btn-danger" (click)="deleteFolderPdf()">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Di Chuyển Ảnh -->
+<div class="modal fade" id="movePdfModal" tabindex="-1" aria-labelledby="moveImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moveImageModalLabel">Di Chuyển Ảnh</h5>
+                <button type="button" class="btn-close"
+                    (click)="hideModal(getModalInstance('movePdfModal'))"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="movePdf(selectedImageId, selectedTargetFolderId)">
+                    <div class="mb-3">
+                        <label for="targetFolderId" class="form-label">Chọn thư mục đích</label>
+                        <select class="form-control" [(ngModel)]="selectedTargetFolderId" name="targetFolderId"
+                            required>
+                            <option [value]="null">Không có cha (Cấp cao nhất)</option>
+                            <ng-container *ngFor="let folder of folderPdf">
+                                <option [value]="folder.id_folder_pdf">{{ folder.name_folder }}</option>
+                                <ng-container *ngIf="folder.children && folder.children.length > 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="categoryOptions; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                                </ng-container>
+                            </ng-container>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Di Chuyển</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xác nhận xóa hình ảnh -->
+<div class="modal fade" id="deletePdfModal" tabindex="-1" aria-labelledby="deleteImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteImageModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close"
+                    (click)="hideModal(getModalInstance('deletePdfModal'))"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa hình ảnh này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    (click)="hideModal(getModalInstance('deletePdfModal'))">Hủy</button>
+                <button type="button" class="btn btn-danger"
+                    (click)="deletePdf(selectedImageId); hideModal(getModalInstance('deletePdfModal'))">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sửa Pdf -->
+<div class="modal fade" id="editPdfModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editImageModalLabel">Sửa Pdf</h5>
+                <button type="button" class="btn-close"
+                    (click)="hideModal(getModalInstance('editPdfModal'))"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="updatePdf(selectedImageId, pdfForm)">
+                    <div class="mb-3">
+                        <label for="fileName" class="form-label">Tên file Pdf</label>
+                        <input type="text" class="form-control" [(ngModel)]="pdfForm.fileName" name="fileName"
+                            required>
+                    </div>
+
+                    <!-- Chọn PDF -->
+                    <div class="mb-3">
+                        <label for="pdfFile" class="form-label fw-bold">Chọn file PDF</label>
+                        <input type="file" class="form-control" id="pdfFile" (change)="onPdfSelected($event)" accept="application/pdf"
+                            name="pdfFile" required />
+
+                        <!-- Hiển thị thông báo lỗi nếu chọn sai file -->
+                        <div *ngIf="errorMessage" class="text-danger mt-2">
+                            <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="folder" class="form-label">Chọn Thư Mục</label>
+                        <select class="form-control" [(ngModel)]="pdfForm.id_folder_pdf" name="folder" required>
+                            <option [value]="null">Không có cha (Cấp cao nhất)</option>
+                            <ng-container *ngFor="let folder of folderPdf">
+                                <option [value]="folder.id_folder_pdf">{{ folder.name_folder }}</option>
+                                <ng-container *ngIf="folder.children && folder.children.length > 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="categoryOptions; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                                </ng-container>
+                            </ng-container>
+                        </select>
+                    </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal hiển thị PDF -->
+<div class="modal fade" id="viewPdfModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="viewPdfLabel">
+    <div class="modal-dialog modal-lg" style="max-width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">XEM FILE PDF</h5>
+                <button type="button" class="btn-close" (click)="hideModal(getModalInstance('viewPdfModal'))"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Đang xem từ domain:</strong> {{ currentDomain }}</p>
+                <div *ngIf="!safePdfUrl && loading" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+                <iframe id="pdfIframe" *ngIf="safePdfUrl" [src]="safePdfUrl" width="100%" height="600" style="border: none;"
+                    (error)="handleIframeError()">
+                </iframe>
+                <div *ngIf="!safePdfUrl && !loading" class="text-danger mt-2">
+                    ❌ Không thể tải file PDF từ bất kỳ domain nào.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="hideModal(getModalInstance('viewPdfModal'))">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

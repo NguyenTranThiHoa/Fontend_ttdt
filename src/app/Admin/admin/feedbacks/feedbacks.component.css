@@ -1,0 +1,208 @@
+.table-responsive {
+    overflow-x: auto;
+    padding: 0px 20px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 15px;
+    margin: 20px;
+    background-color: #ffffff;
+    padding: 10px 20px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgb(255, 255, 255);
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 5px 20px;
+    width: 300px;
+    margin-left: 220px;
+    ;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    padding: 2px;
+    background: rgb(255, 255, 255);
+}
+
+.search-box button {
+    border: none;
+    background: none;
+    color: #28a745;
+    cursor: pointer;
+}
+
+/********************/
+/* 🏠 Tổng quan */
+.control {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* 🎨 Bảng dữ liệu */
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th{
+    background-color: #cbd2d9;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* 🎭 Trạng thái phản hồi */
+.badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-pending {
+    background-color: orange;
+}
+
+.badge-approved {
+    background-color: green;
+}
+
+.badge-rejected {
+    background-color: red;
+}
+
+/* 🔘 Nút hành động */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+}
+
+/* 📌 Phân trang */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    pointer-events: none;
+    color: #ccc;
+}
+
+.btn-success[disabled] {
+    background-color: #ccc !important;
+    /* Khi nút Duyệt bị vô hiệu hóa */
+    color: black !important;
+}
+
+.btn-danger[disabled] {
+    background-color: white !important;
+    /* Khi nút Từ chối bị vô hiệu hóa */
+    color: red !important;
+    border: 1px solid red;
+}
+
+/************************/
+.small-card {
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.small-card .card-body {
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+    font-size: 14px;
+}
+
+.small-card i {
+    font-size: 20px;
+    padding: 0px 20px;
+}
+
+@media (max-width: 768px) {
+    .small-card {
+        height: 90px;
+        font-size: 12px;
+    }
+
+    .small-card i {
+        font-size: 16px;
+    }
+}
+
+/*****************************/
+.category-filter {
+    display: flex;
+}
+
+.category-filter label {
+    margin: 0 8px 0 0;
+    font-size: 14px;
+    color: #495057;
+    font-weight: 700;
+    padding: 10px 10px;
+}

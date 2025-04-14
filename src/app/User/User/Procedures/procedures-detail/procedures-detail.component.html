@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="tabs">
+        <button class="active">Nội dung thủ tục hành chính</button>
+    </div>
+
+    <div class="content" *ngIf="detailProcedures; else noDetail">
+        <table class="detail-table border">
+            <tr>
+                <td class="label">Mã Thủ Tục</td>
+                <td>{{ detailProcedures.id_thutuc }}</td>
+            </tr>
+            <tr>
+                <td class="label">Ngày ban hành</td>
+                <td>{{ detailProcedures.date_issue | date:'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Tên Thủ Tục</td>
+                <td class="procedure-name" style="text-transform: uppercase;">{{ detailProcedures.name_procedures }}</td>
+            </tr>
+            <tr>
+                <td class="label">Trình Tự Thực Hiện</td>
+                <td class="quill-content ql-editor" [innerHTML]="detailProcedures.formatText" style="max-width: 75%;"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Thông báo nếu không có bài viết -->
+    <ng-template #noDetail>
+        <h3 class="text-center mt-5 mb-5">❌ Không tồn tại thủ tục này.</h3>
+    </ng-template>
+    <a [routerLink]="['../']" class="bi-arrow-left-square-fill fs-1"></a>
+</div>

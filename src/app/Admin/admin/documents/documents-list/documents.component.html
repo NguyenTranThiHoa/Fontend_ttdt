@@ -1,0 +1,431 @@
+<div class="control">
+    <h4 style="text-align: center;margin-bottom: 10px;">
+        <strong><em>DANH SÁCH VĂN BẢN - PHÁP LUẬT</em></strong>
+    </h4>
+
+    <div style="font-weight: 500;">
+        Hiển thị
+        <select class="form-select d-inline-block" style="width: 100px; margin-left: 5px;" [(ngModel)]="pageSize"
+            (change)="page = 1">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="15">15</option>
+        </select>
+    </div>
+
+    <div class="category-filter">
+        <label for="categoryFilter">Lọc theo danh mục:</label>
+        <select id="categoryFilter" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange($event)" >
+            <option [value]="null">Tất cả danh mục</option>
+            <ng-container *ngFor="let category of category_documents">
+                <option [value]="category.id_category_document">{{ category.name_category_document }}</option>
+                <ng-container *ngIf="category.children && category.children.length > 0">
+                    <ng-container
+                        *ngTemplateOutlet="categoryOptions; context: { $implicit: category.children, level: 1 }"></ng-container>
+                </ng-container>
+            </ng-container>
+        </select>
+    </div>
+    
+    
+    <ng-template #categoryOptions let-children="$implicit" let-level="level">
+        <ng-container *ngFor="let child of children">
+            <option [value]="child.id_category_document">{{ '—'.repeat(level) }} {{ child.name_category_document }}</option>
+            <ng-container *ngIf="child.children && child.children.length > 0">
+                <ng-container
+                    *ngTemplateOutlet="categoryOptions; context: { $implicit: child.children, level: level + 1 }"></ng-container>
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+</div>
+
+<div *ngIf="successMessage" class="alert alert-success alert-border-left alert-dismissible fade show" role="alert">
+    <i class="ri-notification-off-line me-2 align-middle"></i> 
+    <strong>Thông báo: </strong> {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage=''"></button>
+</div>
+
+<div class="controls">
+    <div>
+        <button type="button" class="btn btn-danger" (click)="deleteSelectedDocuments()" style="background-color: #ffffff; font-weight: 600; color: black;">
+            <i class="bi bi-trash" style="padding: 0px 10px; color: red;"></i>XÓA TẤT CẢ
+        </button>        
+    </div>
+
+    <button type="button" class="btn btn-primary" (click)="openCreateModal()" style="padding: 6px 30px; background-color: #ffffff; font-weight: 600; color: black;">
+        <i class="bi bi-plus-circle" style="padding: 0px 10px; color: blue;"></i>
+        THÊM MỚI
+    </button>
+    
+    <div class="export-options">
+        <select class="form-select" [(ngModel)]="exportOption" (change)="handleExport()">
+            <option value="" selected>Chọn hành động</option>
+            <option value="pdf">Xuất file PDF</option>
+            <option value="excel">Xuất file Excel</option>
+            <option value="print">In trực tiếp</option>
+        </select>
+    </div>
+
+    <div class="search-box">
+        <input type="search" placeholder="Tìm kiếm" [(ngModel)]="searchQuery">
+        <button type="submit"><i class="bi bi-search"></i></button>
+    </div>
+
+</div>
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close"
+                    (click)="hideModal(getModalInstance('deleteConfirmModal'))"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa tin tức này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    (click)="hideModal(getModalInstance('deleteConfirmModal'))">Hủy</button>
+                <button type="button" class="btn btn-danger"
+                    (click)="confirmDelete(); hideModal(getModalInstance('deleteConfirmModal'))">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal thêm/sửa -->
+<div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 1200px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"
+                    style="text-align: center; font-weight: bold; margin-left: 350px; font-family: 'Times New Roman', Times, serif;"
+                    id="categoryModalLabel">{{
+                    isEditMode ? 'SỬA' : 'THÊM' }} DANH SÁCH VĂN BẢN - PHÁP LUẬT</h4>
+                <button type="button" class="btn-close" (click)="hideModal(getModalInstance('categoryModal'))"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Hiển thị thông báo lỗi -->
+                <div *ngIf="errorMessage" class="alert alert-danger text-center">
+                    {{ errorMessage }}
+                </div>
+                
+                <form (ngSubmit)="saveDocuments()">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="title" class="form-label" style="font-weight: bold;">Tên Văn bản - Pháp luât:</label>
+                                <input type="text" class="form-control" [(ngModel)]="documentsForm.title" name="title" required />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="description" class="form-label" style="font-weight: bold;">Mô tả ngắn: </label>
+                                <textarea class="form-control" [(ngModel)]="documentsForm.description_short" name="description_short" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="content" class="form-label" style="font-weight: bold;">Nội dung chính: </label>
+                                <textarea class="form-control" [(ngModel)]="documentsForm.description" name="description" rows="4" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="documentParentId" class="form-label" style="font-weight: bold;">Chọn danh mục: </label>
+                                <select class="form-select" [(ngModel)]="documentsForm.id_category_document" name="documentParentId">
+                                    <option [value]="null">Không có cha (Cấp cao nhất)</option>
+                                    <ng-container *ngFor="let category of category_documents">
+                                        <option [value]="category.id_category_document">{{ category.name_category_document }}</option>
+                                        <ng-container *ngIf="category.children && category.children.length > 0">
+                                            <ng-container
+                                                *ngTemplateOutlet="categoryOptions; context: { $implicit: category.children }"></ng-container>
+                                        </ng-container>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="account" style="font-weight: bold;">Tài khoản của bạn</label>
+                                <select [(ngModel)]="documentsForm.id_account" name="id_account" class="form-select d-inline-block">
+                                    <option [value]="id_account">{{ username }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <div class="mb-3" style="padding: 0px 10px;">
+                                <label for="file_path" class="form-label" style="font-weight: bold;">Chọn file PDF</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" [(ngModel)]="selectedPdfName" name="selectedPdfName" readonly
+                                        placeholder="Chưa chọn file PDF">
+                                    <button class="btn btn-primary" type="button" (click)="openPdfSelectorModal()">
+                                        <i class="bi bi-folder"></i> Chọn file từ thư mục
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+ 
+                    </div>
+                    <button type="submit" class="btn btn-primary me-2" style="padding: 5px 30px; margin-left: 520px;">
+                        <i class="bi bi-save" style="padding: 0px 10px;"></i>{{ isEditMode ? 'Cập nhật' : 'Lưu' }}
+                    </button>
+                </form>                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="hideModal(getModalInstance('categoryModal'))">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template đệ quy cho dropdown -->
+<ng-template #categoryOptions let-children>
+    <ng-container *ngFor="let child of children">
+        <option [value]="child.id_category_document">{{ child.name_category_document }}</option>
+        <ng-container *ngIf="child.children && child.children.length > 0">
+            <ng-container *ngTemplateOutlet="categoryOptions; context: { $implicit: child.children }"></ng-container>
+        </ng-container>
+    </ng-container>
+</ng-template>
+
+<!-- Modal xác nhận xóa nhiều -->
+<div class="modal fade" id="deleteSelectedConfirmModal" tabindex="-1" aria-labelledby="deleteSelectedConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteSelectedConfirmModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="!hasSelectedDocuments" class="alert alert-warning">
+                    Vui lòng chọn ít nhất một danh sách để xóa!
+                </div>
+                Bạn có chắc chắn muốn xóa các danh sách đã chọn không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" (click)="confirmDeleteSelected()" data-bs-dismiss="modal"
+                    [disabled]="!hasSelectedDocuments">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive" id="categoryTable" style="padding: 0px 20px">
+    <table class="table table-striped table-bordered" *ngIf="documents.length > 0">
+        <thead class="table-light">
+            <tr>
+                <th>
+                    <input type="checkbox" (change)="toggleAll($event)" [checked]="isAllSelected">
+                </th>
+                <th>STT</th>
+                <th>Tên văn bản</th>
+                <th>Danh mục</th> 
+                <th>Mô tả ngắn </th>
+                <th>Nội dung chính</th>
+                <th>Ngày tạo</th>
+                <th>Tài khoản</th> 
+                <th>Thư mục</th>
+                <th>Hành động</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                *ngFor="let documentss of filteredDocuments | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                <td>
+                    <input type="checkbox" [(ngModel)]="documentss.selected">
+                </td>
+                <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                <td>{{ truncateHTML(documentss.title, 30) }}</td>
+                <td>{{ getCategoryFullName(documentss)}}</td> <!-- Hiển thị tên danh mục -->                
+                <td>{{ truncateHTML(documentss.description_short, 50) }}</td>
+                <td>{{ truncateHTML(documentss.description, 50) }}</td>
+                <td>{{ documentss.create_at | date: 'dd-MM-yyyy' }}</td>
+                <td>{{ getAccounts_Name(documentss.id_account) }}</td>
+                <td>{{ documentss.file_path}}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(documentss)"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm me-2" (click)="DeleteDocuments(documentss.id_document)"><i class="bi bi-trash"></i></button>
+                </td>  
+                <td>
+                    <button class="btn btn-info btn-sm me-2" (click)="viewDetails(documentss)"><i class="bi bi-eye"></i></button>
+                    
+                    <button class="btn btn-sm" [ngClass]="documentss.isVisible ? 'btn-success' : 'btn-danger'"
+                        (click)="toggleVisibility(documentss)">
+                        {{ documentss.isVisible ? 'Hiện' : 'Ẩn' }}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết tài liệu</h5>
+                <button type="button" class="btn-close" (click)="hideModal(getModalInstance('categoryModal'))"></button>
+            </div>
+
+            <div class="modal-body">
+                <div *ngIf="docDetail">
+                    <!-- Thông tin tài liệu -->
+                    <h4>{{ docDetail.title }}</h4>
+                    <p>Ngày tạo: {{ docDetail.create_at | date:'dd/MM/yyyy' }}</p>
+
+                    <!-- Hiển thị PDF -->
+                    <div class="pdf-viewer mt-3">
+                        <div *ngIf="fileUrl; else pdfError">
+                            <iframe [src]="getSafeUrl(fileUrl)" width="100%" height="500px" frameborder="0"
+                                (load)="handlePdfLoad()" (error)="handlePdfError($event)">
+                            </iframe>
+                            <div *ngIf="!pdfLoaded" class="loading-indicator">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="ms-2">Đang tải từ {{ domains[currentDomainIndex] }}...</span>
+                            </div>
+                        </div>
+
+                        <ng-template #pdfError>
+                            <div class="alert alert-warning">
+                                Không thể tải tài liệu. Vui lòng thử lại sau.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" (click)="downloadFile()" [disabled]="!pdfLoaded">
+                    <i class="fas fa-download"></i> Tải về
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="hideModal(getModalInstance('detailModal'))"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Phân trang -->
+<nav aria-label="Page navigation" class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item" [class.disabled]="page === 1">
+            <a class="page-link" (click)="page = page - 1">&laquo;</a>
+        </li>
+        <li class="page-item" *ngFor="let p of getPaginationArray()" [class.active]="page === p">
+            <a class="page-link" (click)="page = p">{{ p }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="page === totalPages">
+            <a class="page-link" (click)="page = page + 1">&raquo;</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Modal chọn file PDF -->
+<div class="modal fade" id="pdfSelectorModal" tabindex="-1" aria-labelledby="pdfSelectorModalLabel" aria-hidden="true"
+    style="padding-top: 70px;">
+    <div class="modal-dialog modal-lg" style="max-width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #c5cfcf">
+                <h5 class="modal-title">Chọn File PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="background-color: #f2f1f1">
+                <div class="row">
+                    <!-- Cột danh sách thư mục PDF -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm p-3">
+                            <h5 class="fw-bold">Thư mục</h5>
+                            <ul class="folder-tree">
+                                <ng-container *ngFor="let folder of folderPdf">
+                                    <li class="folder-item"
+                                        [ngClass]="{'active': folder.id_folder_pdf === activeFolderId}"
+                                        (click)="selectFolder(folder)" (click)="toggleFolder(folder)">
+                                        <span class="folder-icon">
+                                            <i class="bi"
+                                                [ngClass]="{'bi-folder': !folder.isExpanded, 'bi-folder2-open': folder.isExpanded}"></i>
+                                        </span>
+                                        <span class="folder-name">{{ folder.name_folder }}</span>
+                                        <span class="badge bg-primary">{{ folder.children.length || 0 }}</span>
+                                    </li>
+                                    <ng-container
+                                        *ngIf="folder.children && folder.children.length > 0 && folder.isExpanded">
+                                        <ng-container
+                                            *ngTemplateOutlet="recursiveFolder; context: { $implicit: folder.children, level: 1 }"></ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Cột danh sách file PDF -->
+                    <div class="col-md-8">
+                        <div class="card shadow-sm p-3">
+                            <h5 class="fw-bold">File PDF trong thư mục</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Tên File PDF</th>
+                                            <th>Thư mục PDF</th>
+                                            <th>Chọn</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let pdf of filteredPostPdf; let i = index">
+                                            <td>{{ i + 1 }}</td>
+                                            <td>{{ pdf.fileName }}</td>
+                                            <td>{{ pdf.filePath }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm"
+                                                    (click)="selectPdf(pdf.filePath, pdf.fileName)">
+                                                    <i class="bi bi-check-circle"></i> Chọn
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div *ngIf="filteredPostPdf.length === 0" class="text-center">Không có file PDF nào.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template đệ quy cho danh sách thư mục con -->
+<ng-template #recursiveFolder let-folders="$implicit" let-level="level">
+    <ul class="sub-folder-tree" [style.margin-left.px]="level * 20">
+        <ng-container *ngFor="let folder of folders">
+            <li class="folder-item" [ngClass]="{'active': folder.id_folder_pdf === activeFolderId}"
+                (click)="selectFolder(folder)" (click)="toggleFolder(folder)">
+                <span class="folder-icon">
+                    <i class="bi"
+                        [ngClass]="{'bi-folder': !folder.isExpanded, 'bi-folder2-open': folder.isExpanded}"></i>
+                </span>
+                <span class="folder-name" (click)="selectFolder(folder)">{{ folder.name_folder }}</span>
+                <span class="badge bg-primary">{{ folder.children?.length || 0 }}</span>
+            </li>
+            <ng-container *ngIf="folder.children && folder.children.length > 0 && folder.isExpanded">
+                <ng-container
+                    *ngTemplateOutlet="recursiveFolder; context: { $implicit: folder.children, level: level + 1 }"></ng-container>
+            </ng-container>
+        </ng-container>
+    </ul>
+</ng-template>

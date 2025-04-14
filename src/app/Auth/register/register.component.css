@@ -1,0 +1,132 @@
+/* Lớp ngoài cùng với hình nền */
+.register-wrapper {
+  background-image: url('/assets/img/AnhNen2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  /* Hiệu ứng mờ nền */
+}
+
+/* Hộp chứa form đăng ký */
+.register-container {
+  max-width: 450px;
+  width: 100%;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(126, 105, 105, 0.8);
+  background-color: rgb(33 26 26 / 48%);
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.register-container:hover {
+  transform: scale(1.02);
+}
+
+/* Tiêu đề */
+.register-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+/* Form đăng ký */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Nhóm nhập liệu */
+.form-group {
+  text-align: left;
+}
+
+/* Label */
+.form-group label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Ô nhập liệu */
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease-in-out;
+  font-size: 16px;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+}
+
+/* Thông báo lỗi */
+.alert {
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Nút đăng ký */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Hiệu ứng khi nhấn */
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Link đăng nhập */
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 15px;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,67 @@
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="login-header">
+      <h2 class="login-title">ĐĂNG NHẬP</h2>
+    </div>
+
+    <!-- Thông báo lỗi -->
+    <div *ngIf="error" class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+      <i class="ri-error-warning-line me-2 align-middle"></i>
+      <strong>Lỗi: </strong> {{ error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+        (click)="error = null"></button>
+    </div>
+
+    <!-- Thông báo thành công -->
+    <div *ngIf="successMessage" class="alert alert-success alert-border-left alert-dismissible fade show" role="alert">
+      <i class="ri-notification-off-line me-2 align-middle"></i>
+      <strong>Thông báo: </strong> {{ successMessage }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+        (click)="successMessage = null"></button>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onLogin()">
+      <!-- Tên đăng nhập -->
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-person" style="color: #50409A;"></i>
+          </span>
+          <input type="text" id="username" class="form-control" [(ngModel)]="loginModel.username" name="username"
+            required placeholder="Tên đăng nhập">
+        </div>
+      </div>
+
+      <!-- Mật khẩu -->
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-lock" style="color: #50409A;"></i>
+          </span>
+          <input type="{{passwordVisible ? 'text' : 'password'}}" id="password" class="form-control"
+            [(ngModel)]="loginModel.password" name="password" required placeholder="Mật khẩu">
+          <span class="input-group-text" (click)="togglePasswordVisibility()">
+            <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Quên mật khẩu -->
+      <div class="form-options">
+        <a href="auth/app-forgotpassword" class="forgot-password" style="color: #0d1458;">Quên mật khẩu?</a>
+      </div>
+
+      <!-- Nút đăng nhập -->
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+      </div>
+
+      <!-- Link đăng ký -->
+      <div class="register-link">
+        Bạn chưa có tài khoản? <a href="auth/register">Đăng ký ngay</a>
+      </div>
+    </form>
+  </div>
+</div>

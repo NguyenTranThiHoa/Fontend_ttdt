@@ -1,0 +1,182 @@
+<div style="overflow: hidden;">
+    <div class="container-fluid topbar text-center" [ngStyle]="{
+            'background-image': bannerUrlToShow ? 'url(' + bannerUrlToShow + ')'
+             : 'none',
+            'background-color': websiteSettings?.bannerBackgroundColor
+        }">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <img *ngIf="websiteSettings?.logoUrl" [src]="getImageUrlWithFallback(websiteSettings, 'logoUrl')"
+                    (error)="handleImageError($event, websiteSettings, 'logoUrl')" alt="Logo">
+            </div>
+            <div class="col-md-10 text-uppercase topbar-title">
+                <h3 class="m-0" [ngStyle]="{'color': websiteSettings?.bannnerTextColor}">
+                    {{ websiteSettings?.bannerText }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light"
+        [ngStyle]="{'background-color': websiteSettings?.menuBackgroundColor}">
+        <div class="container">
+
+            <a class="navbar-brand" href="/" style="margin-left: 20px;">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+
+            <input type="checkbox" id="check" style="display: none;">
+            <div class="hamburger-menu-container">
+                <label for="check" class="hamburger-menu">
+                    <div></div>
+                </label>
+            </div>
+
+            <div class="navbar-collapse justify-content-center" id="navbarNav" menuBackgroundColor>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" [ngStyle]="{'color': websiteSettings?.menuTextColor}">
+                            Giới Thiệu
+                            <i class="bi bi-chevron-down dropdown-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <a class="dropdown-item gth" *ngFor="let categoryIntro of categoriesIntroduce"
+                                [routerLink]="['/introduce',formatName(categoryIntro.name_cate_introduce)]">
+                                {{ categoryIntro.name_cate_introduce }}
+                            </a>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" [ngStyle]="{'color': websiteSettings?.menuTextColor}">
+                            Tin Tức - Sự Kiện
+                            <i class="bi bi-chevron-down dropdown-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- Gọi hàm đệ quy để hiển thị danh mục và các cấp con -->
+                            <ng-container *ngFor="let category of categories">
+                                <ng-container
+                                    *ngTemplateOutlet="categoryMenu; context: { category: category }"></ng-container>
+                            </ng-container>
+                        </ul>
+                    </li>
+
+                    <!-- Định nghĩa template đệ quy để hiển thị danh mục và các cấp con -->
+                    <ng-template #categoryMenu let-category="category">
+                        <li class="dropdown-item dropdown">
+                            <a class="dropdown-item level1"
+                                [routerLink]="['/news_events', formatName(category.name_category)]">
+                                {{ displayCategory(category) }}
+                                <i *ngIf="category.children?.length" class="bi bi-chevron-down dropdown-icon"
+                                    (click)="toggleDropdown(category, $event); $event.stopPropagation();">
+                                </i>
+                            </a>
+
+                            <!-- Nếu có danh mục con, hiển thị đệ quy  -->
+                            <ul class="dropdown-menu" *ngIf="category.children?.length">
+                                <ng-container *ngFor="let subcategory of category.children">
+                                    <ng-container
+                                        *ngTemplateOutlet="categoryMenu; context: { category: subcategory }"></ng-container>
+                                </ng-container>
+                            </ul>
+                        </li>
+                    </ng-template>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" [ngStyle]="{'color': websiteSettings?.menuTextColor}">
+                            Văn Bản
+                            <i class="bi bi-chevron-down dropdown-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- Gọi hàm đệ quy để hiển thị danh mục và các cấp con -->
+                            <ng-container *ngFor="let category of categoriesDoc">
+                                <ng-container
+                                    *ngTemplateOutlet="categoryDocMenu; context: { category: category }"></ng-container>
+                            </ng-container>
+                        </ul>
+                    </li>
+                    <!-- Định nghĩa template đệ quy để hiển thị danh mục và các cấp con -->
+                    <ng-template #categoryDocMenu let-category="category">
+                        <li class="dropdown-item dropdown">
+                            <a class="dropdown-item level1"
+                                [routerLink]="['/document', formatName(category.name_category_document)]">
+                                {{ displayCategoryDoc(category) }}
+                                <i *ngIf="category.children?.length" class="bi bi-chevron-down dropdown-icon"
+                                    (click)="toggleDropdown(category, $event); $event.stopPropagation();">
+                                </i>
+                            </a>
+
+                            <!-- Nếu có danh mục con, hiển thị đệ quy -->
+                            <ul class="dropdown-menu" *ngIf="category.children?.length">
+                                <ng-container *ngFor="let subcategory of category.children">
+                                    <ng-container
+                                        *ngTemplateOutlet="categoryDocMenu; context: { category: subcategory }"></ng-container>
+                                </ng-container>
+                            </ul>
+                        </li>
+                    </ng-template>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/procedures" [ngStyle]="{'color': websiteSettings?.menuTextColor}">
+                            Thủ Tục Hành Chính
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/feedback" [ngStyle]="{'color': websiteSettings?.menuTextColor}">
+                            Phản hồi - Liên hệ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Thông Báo & Dòng chữ chạy -->
+    <div class="bg-light text-center py-2">
+        <div class="d-flex align-items-center justify-content-between container">
+            <!-- Hiển thị thời gian (Tăng độ rộng) -->
+            <div class="flex-grow-1 text-start" style="width: 15%;">
+                <span id="current-time"></span><br>
+                <span id="current-date"></span>
+            </div>
+
+            <!-- Chữ chạy -->
+            <marquee class="marquee flex-grow-2 text-center">Chào mừng bạn đến với Trang thông tin điện tử xã phường
+            </marquee>
+
+            <!-- Ô tìm kiếm -->
+            <form class="d-flex search-box" (ngSubmit)="onSearch()">
+                <input class="form-control me-2" style="width: 250px; border: 1px solid #9c9c9c;" type="search"
+                    placeholder="Tìm kiếm" [(ngModel)]="searchText" name="searchText">
+                <button class="btn btn-outline-primary" title="timkiem" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <router-outlet></router-outlet>
+
+    <!-- Footer Start -->
+    <div class="container-fluid  px-sm-3 px-md-5 mt-5 d-flex justify-content-center"
+        [ngStyle]="{'background-color': websiteSettings?.footerBackgroundColor}">
+        <div class="row py-4 text-white text-center w-100">
+            <div class="col-md-6 mx-auto d-flex flex-column align-items-center">
+
+                <img *ngIf="websiteSettings?.logoUrl" [src]="getImageUrlWithFallback(websiteSettings, 'logoUrl')"
+                    (error)="handleImageError($event, websiteSettings, 'logoUrl')" alt="Logo"
+                    style="height: 100px; margin-bottom: 10px; border-radius: 50%; object-fit:contain">
+
+                <div [ngStyle]="{'color': websiteSettings?.footerTextColor}">
+                    <h5 class="mb-3" style="text-transform: uppercase; font-weight: 500;">
+                        {{ websiteSettings?.bannerText }}
+                    </h5>
+                    <h6 class="mb-3">Địa chỉ: {{ websiteSettings?.footerAddress }}</h6>
+                    <h6 class="mb-3">Email: {{ websiteSettings?.footerEmail }}</h6>
+                    <h6>Điện thoại liên hệ: {{ websiteSettings?.footerPhone }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

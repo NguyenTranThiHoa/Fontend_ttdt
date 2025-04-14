@@ -1,0 +1,138 @@
+.table-responsive {
+    overflow-x: auto;
+    padding: 0px 20px;
+}
+.controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+    margin: 20px;
+    background-color: #ffffff;
+    padding: 10px 20px;
+}
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgb(255, 255, 255);
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 5px 20px;
+    width: 250px;
+    margin-left: 20px;;
+}
+.search-box input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    padding: 2px;
+    background: rgb(255, 255, 255);
+}
+.search-box button {
+    border: none;
+    background: none;
+    color: #28a745;
+    cursor: pointer;
+}
+
+/************************/
+.table-responsive {
+    overflow-x: auto;
+    padding: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.table thead th {
+    padding: 12px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #cbd2d9;
+}
+
+.table tbody td {
+    padding: 7px;
+    text-align: center;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.table tbody td:last-child {
+    /* display: flex; */
+    justify-content: center;
+    gap: 5px;
+}
+
+/*******************************************/
+.accounts-container {
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.btn-group {
+    margin-top: 10px;
+}
+
+.table-responsive>.table-bordered {
+    border: 1px solid #dee2e6 !important;
+}
+
+
+.permission-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.permission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.form-check-input {
+    transform: scale(1.2);
+}

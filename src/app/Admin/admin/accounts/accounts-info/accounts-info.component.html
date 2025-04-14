@@ -1,0 +1,146 @@
+<!-- Alert thông báo thành công -->
+<div *ngIf="successMessage" class="alert alert-success alert-border-left alert-dismissible fade show" role="alert">
+    <i class="ri-notification-off-line me-2 align-middle"></i>
+    <strong>Thông báo: </strong> {{ successMessage }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+        (click)="successMessage=''"></button>
+</div>
+
+<div class="container mt-4">
+    <h3 class="text-center" style="font-weight: bold;"><em>THÔNG TIN CÁ NHÂN</em></h3>
+
+    <div class="card p-4 shadow">
+        <div class="row">
+            <!-- Ảnh đại diện bên trái -->
+            <div class="col-md-4 text-center" style="padding: 50px 10px;">
+                <img src="/assets/img/AnhDaiDien.png" class="img-fluid" alt="Avatar"
+                    style="width: 200px; height: 200px;">
+            </div>
+
+            <!-- Cột thông tin bên phải -->
+            <div class="col-md-8">
+                <table class="table" *ngIf="accountsForm">
+                    <tbody>
+                        <tr>
+                            <th>Tên đăng nhập:</th>
+                            <td>{{ accountsForm.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Mật khẩu:</th>
+                            <td>******</td> <!-- Hiển thị mật khẩu đã ẩn -->
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ accountsForm.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Họ và tên:</th>
+                            <td>{{ accountsForm.fullname }}</td>
+                        </tr>
+                        <tr>
+                            <th>Vai trò:</th>
+                            <td>
+                                <span class="badge" [ngClass]="{
+                                        'bg-primary text-white': accountsForm.role === 'Admin',
+                                        'bg-warning text-dark': accountsForm.role === 'Manager'
+                                    }">
+                                    {{ accountsForm.role }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái:</th>
+                            <td>
+                                <span class="badge" [ngClass]="{
+                                        'bg-success': accountsForm.status === 'Active',
+                                        'bg-danger': accountsForm.status === 'Inactive'
+                                    }">
+                                    {{ accountsForm.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p *ngIf="!accountsForm" class="text-danger">Không thể tải thông tin tài khoản.</p>
+            </div>
+        </div>
+
+        <!-- Nút cập nhật thông tin và thay đổi mật khẩu -->
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="openEditProfileModal()">Cập nhật thông tin</button>
+            
+            <button class="btn btn-warning" (click)="openChangePasswordModal()">Thay đổi mật khẩu</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal cập nhật thông tin cá nhân -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Cập nhật thông tin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="saveAccounts_Update()">
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập:</label>
+                        <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email:</label>
+                        <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên:</label>
+                        <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thay đổi mật khẩu -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Thay đổi mật khẩu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="updatePassword()">
+                    <div class="mb-3 position-relative">
+                        <label class="form-label">Mật khẩu cũ:</label>
+                        <input [type]="showOldPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.oldPassword" name="oldPassword" required>
+                        <i class="bi" [ngClass]="showOldPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('old')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label class="form-label">Mật khẩu mới:</label>
+                        <input [type]="showNewPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.newPassword" name="newPassword" required>
+                        <i class="bi" [ngClass]="showNewPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('new')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label class="form-label">Xác nhận mật khẩu mới:</label>
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.confirmPassword" name="confirmPassword" required>
+                        <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('confirm')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Cập nhật mật khẩu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

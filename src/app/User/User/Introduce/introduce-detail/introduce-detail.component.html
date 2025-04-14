@@ -1,0 +1,80 @@
+<div class="container-fluid my-5 d-flex flex-column flex-md-row justify-content-center align-items-start"
+    style="gap: 10px;">
+    <!-- Thẻ card nằm bên trái -->
+    <!-- <div class="d-flex flex-column align-items-start col-12 col-md-4 mb-4 order-2 order-md-1">
+
+        <div class="mb-3 w-100 mt-4">
+            <div class="section-title mb-2 w-100">
+                <iframe src="https://www.youtube.com/embed/5biWpOlyp98" class="w-100" height="350" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                    gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Phần thông tin bài viết -->
+    <div class="container flex-grow-1 col-12 col-md-3 order-1 order-md-2">
+        <div class="card shadow-lg">
+            <div class="card-body" *ngIf="introduceDetail">
+                <h4 class="card-title">{{ introduceDetail.name_introduce }}</h4>
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <p class="text-muted">Ngày đăng: {{ introduceDetail.create_at | date:'dd/MM/yyyy' }}</p>
+                    <div class="d-flex align-items-center text-controls">
+                        <label class="me-2">Cỡ chữ:</label>
+                        <button (click)="increaseFontSize()" class="btn btn-sm btn-outline-primary">+</button>
+                        <button (click)="decreaseFontSize()" class="btn btn-sm btn-outline-primary ms-1">-</button>
+                        <button (click)="readArticle()" class="btn btn-sm btn-primary ms-3">🔊 Đọc bài viết</button>
+                        <button (click)="stopReading()" class="btn btn-sm btn-danger ms-2">⏹ Dừng</button>
+                    </div>
+                </div>
+                <!-- <img *ngIf="introduceDetail.image_url" style="height: 350px; align-content: center; object-fit: cover"
+                    [src]="'https://api.ttdt03.id.vn/api/images/' + introduceDetail.image_url" class="img-fluid mt-3" -->
+                alt="Hình ảnh bài giới thiệu">
+                <img *ngIf="introduceDetail.image_url" [src]="getImageUrlWithFallback(introduceDetail, 'image_url')"
+                    (error)="handleImageError($event, introduceDetail, 'image_url')"
+                    style="height: 350px; align-content: center; object-fit: cover" class="img-fluid mt-3"
+                    alt="Hình ảnh bài giới thiệu" />
+
+                <p class="card-text mt-2 content" [style.fontSize.px]="fontSize"
+                    [innerHTML]="introduceDetail.formatHTML"></p>
+            </div>
+        </div>
+
+        <!-- Hiển thị các bài viết liên quan -->
+        <div class="related-news mt-4" *ngIf="relatedIntroduce.length > 0; else noRelatedNews">
+            <div class="section-title mb-0">
+                <h4 class="m-0 text-uppercase font-weight-bold">Bài viết liên quan</h4>
+            </div>
+            <div class="mt-3">
+                <div class="mb-3" *ngFor="let news of relatedIntroduce">
+                    <div class="d-flex align-items-center bg-white mb-3" style="flex-direction: row;">
+                        <!-- Hình ảnh bài viết -->
+                        <!-- <img *ngIf="news.image_url" [src]="'https://api.ttdt03.id.vn/api/images/' + news.image_url"
+                            class="card-img-left" alt="Hình ảnh bài viết"
+                            style="height: 130px; width: 150px; object-fit: cover; border-radius: 5px; margin-right: 15px;"> -->
+                        <img *ngIf="news.image_url" [src]="getImageUrlWithFallback(news, 'image_url')"
+                            (error)="handleImageError($event, news, 'image_url')" class="card-img-left"
+                            alt="Hình ảnh bài viết"
+                            style="height: 130px; width: 150px; object-fit: cover; border-radius: 5px; margin-right: 15px;" />
+
+                        <div class="justify-content-center d-flex flex-column px-3" style="min-height: 110px;">
+                            <a [routerLink]="['../', formatName(news.name_introduce)]"
+                                class="h5 text-decoration-none mt-3 title-intro">
+                                {{ news.name_introduce }}
+                            </a>
+                            <p class="text-muted mt-auto mb-3">Ngày đăng: {{ news.create_at | date:'dd/MM/yyyy' }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+        </div>
+        <!-- Thông báo nếu không có bài viết liên quan -->
+        <ng-template #noRelatedNews>
+            <h3 class="text-center mt-5">Không có bài viết liên quan.</h3>
+        </ng-template>
+    </div>
+</div>

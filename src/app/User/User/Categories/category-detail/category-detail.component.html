@@ -1,0 +1,116 @@
+<div class="container-fluid my-5 d-flex flex-column flex-md-row justify-content-center align-items-start"
+  style="gap: 10px;">
+
+  <!-- Thẻ card nằm bên trái -->
+  <div class="d-flex flex-column align-items-start col-12 col-md-4 mb-4 order-2 order-md-1">
+
+    <div class="mb-3 w-100 mt-4">
+      <div class="section-title mb-0">
+        <h4 class="m-0 text-uppercase font-weight-bold">Tin tức mới nhất</h4>
+      </div>
+      <div class="bg-white border round p-3">
+        <div *ngFor="let news of Top5LatestNewsByCate" class="d-flex align-items-center bg-white mb-3 border rounded">
+          <img class="img-fluid flex-shrink-0" [src]="getImageUrlWithFallback(news, 'image')"
+            (error)="handleImageError($event, news, 'image')" alt="news.title"
+            style="width: 150px; height: 80px; object-fit: cover">
+
+          <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center ">
+            <div class="mb-2">
+              <a class="text-body" style="text-decoration: none;">
+                <small>{{ news.create_at | date:'dd/MM/yyyy' }}</small>
+              </a>
+            </div>
+            <a class=" mb-2 m-0 title-news" [routerLink]="['../', formatName(news.title)]">{{ news.title }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title mb-2 w-100">
+      <iframe src="https://www.youtube.com/embed/5biWpOlyp98" class="w-100" height="350" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                    gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <!-- Phần thông tin bài viết -->
+  <div class="container flex-grow-1 col-12 col-md-3 order-1 order-md-2">
+    <div class="card shadow-lg">
+      <div class="card-body" *ngIf="newsDetail; else noNews">
+        <h2 class="card-title">{{ newsDetail.title }}</h2>
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+          <p class="text-muted">Ngày đăng: {{ newsDetail.create_at | date:'dd/MM/yyyy' }}</p>
+          <div class="d-flex align-items-center text-controls">
+            <label class="me-2">Cỡ chữ:</label>
+            <button (click)="increaseFontSize()" class="btn btn-sm btn-outline-primary">+</button>
+            <button (click)="decreaseFontSize()" class="btn btn-sm btn-outline-primary ms-1">-</button>
+            <button (click)="readArticle()" class="btn btn-sm btn-primary ms-3">🔊 Đọc bài viết</button>
+            <button (click)="stopReading()" class="btn btn-sm btn-danger ms-2">⏹ Dừng</button>
+          </div>
+        </div>
+        <p class="card-text content" [style.fontSize.px]="fontSize" [innerHTML]="newsDetail.formatted_content">
+        </p>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-eye-fill fs-5 me-2"></i>
+          <span>{{ newsDetail.view }} lượt xem</span> <!-- Thay đổi theo thuộc tính trong model -->
+        </div>
+        <a [routerLink]="[backLink]" class="bi-arrow-left-square-fill fs-1"></a>
+      </div>
+      <!-- Thông báo nếu không có bài viết -->
+      <ng-template #noNews>
+        <h3 class="text-center mt-5 mb-5">❌ Không tồn tại bài viết này.</h3>
+      </ng-template>
+    </div>
+
+    <!-- Hiển thị các bài viết liên quan -->
+    <div class="related-news mt-4" *ngIf="paginatedRelateNews.length > 0; else noRelatedNews">
+      <div class="section-title mb-0">
+        <h4 class="m-0 text-uppercase font-weight-bold">Tin tức liên quan</h4>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 col-md-3 mb-3" *ngFor="let news of paginatedRelateNews">
+          <div class="card shadow-lg">
+            <!-- Hình ảnh bài viết -->
+            <img *ngIf="news.image" [src]="getImageUrlWithFallback(news, 'image')"
+              (error)="handleImageError($event, news, 'image')" class="card-img-top" alt="Hình ảnh bài viết"
+              style="height: 130px;  border-top-left-radius: 5px; border-top-right-radius: 5px; object-fit: cover">
+            <div class="justify-content-center d-flex flex-column px-3" style="min-height: 110px;">
+              <a [routerLink]="['../', formatName(news.title)]" class="text-decoration-none mt-3 title-news">
+                {{ news.title }}
+              </a>
+              <p class="text-muted mt-auto mb-3">Ngày đăng: {{ news.create_at | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation" class="mt-4" *ngIf="paginatedRelateNews.length > 0">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li *ngFor="let page of [].constructor(totalPages); let i = index" class="page-item"
+          [class.active]="currentPage === i + 1">
+          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Thông báo nếu không có bài viết liên quan -->
+    <ng-template #noRelatedNews>
+      <h3 class="text-center mt-5">Không có bài viết liên quan.</h3>
+    </ng-template>
+
+  </div>
+
+
+</div>

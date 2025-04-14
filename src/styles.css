@@ -1,0 +1,23 @@
+@import url('assets/css/bootstrap.min.css');
+@import 'quill/dist/quill.snow.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+::ng-deep .ql-editor {
+    font-size: inherit;
+    color: inherit;
+}
+
+::ng-deep .ql-editor table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+::ng-deep .ql-editor th,
+::ng-deep .ql-editor td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+::ng-deep .ql-editor th {
+    background-color: #f4f4f4;
+}

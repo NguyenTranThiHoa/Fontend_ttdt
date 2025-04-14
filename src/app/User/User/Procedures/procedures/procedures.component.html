@@ -1,0 +1,83 @@
+<!-- Bộ lọc Ngành - Lĩnh vực -->
+<div class="container mt-3">
+    <h3 class="mb-3">Tra cứu Thủ tục</h3>
+    <hr style="border: 2px solid #4099FF; width: 30%; background-color: #4099FF">
+
+    <!-- Bộ lọc Ngành - Lĩnh vực & Ô nhập tìm kiếm -->
+    <div class="row mb-3">
+        <!-- Bộ lọc lĩnh vực -->
+        <div class="col-md-4">
+            <label for="category"><b>Ngành - Lĩnh vực:</b></label>
+            <select class="form-control" id="category" [(ngModel)]="selectedCategoryId" (change)="onCategorySelect()" class="form-select"
+                style="border: 1px solid #9c9c9c;">
+                <option value=>Tất cả</option>
+                <ng-container *ngIf="categories && categories.length > 0">
+                    <ng-container *ngFor="let category of categories">
+                        <option style="font-weight: bold;" disabled [value]="category.id_Field">{{ category.name_Field }}
+                        </option>
+                        <ng-container *ngFor="let subCategory of category.children">
+                            <option [value]="subCategory.id_Field">- {{ subCategory.name_Field }}</option>
+                            <ng-container *ngFor="let child of subCategory.children">
+                                <option [value]="child.id_Field">-- {{ child.name_Field }}</option>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </select>
+        </div>
+
+        <!-- Ô nhập tìm kiếm -->
+        <div class="col-md-5">
+            <label for="search"><b>Tìm kiếm thủ tục:</b></label>
+            <input type="text" class="form-control" id="search" placeholder="Nhập tên thủ tục cần tìm..."
+                [(ngModel)]="searchText" (input)="filterProcedures()" style="border: 1px solid #9c9c9c;">
+        </div>
+    </div>
+
+    <p *ngIf="filteredProcedures.length" style="font-size: 1em;">
+        Tìm thấy <b>{{ filteredProcedures.length }}</b> thủ tục hành chính.
+    </p>
+    <div *ngIf="noProceduresMessage" class="no-procedures-message">
+        <p>{{ noProceduresMessage }}</p>
+    </div>
+    <!-- Danh sách Thủ tục -->
+    <hr style="border-top: 1px solid #5e5a5a; margin-top: 2px;" class="col-md-9 col-12">
+    <div class="row">
+        <div class="col-md-9 mb-3" *ngFor="let procedure of pagedProcedures">
+            <div class="d-flex flex-row align-items-start" style="border: none;">
+                <!-- Nội dung bên phải -->
+                <div class="flex-column justify-content-between" style="padding-left: 15px;">
+                    <p class="text-muted mb-0">{{ procedure.id_thutuc }}</p>
+
+                    <h5 class="mb-1">
+                        <a [routerLink]="['/procedures', procedure.id_thutuc]" class="text-decoration-none">
+                            {{ procedure.name_procedures }}
+                        </a>
+                    </h5>
+                    <p class="text-muted mb-0"><b>Lĩnh vực: </b> {{ procedure.category_name }}</p>
+                    <p class="text-muted">Ngày ban hành: {{ procedure.date_issue | date:'dd/MM/yyyy' }}</p>
+                </div>
+            </div>
+            <hr style="border-top: 1px solid #5e5a5a; margin-top: 2px;">
+        </div>
+    </div>
+
+    <!-- Phân trang -->
+    <nav *ngIf="totalPages > 1">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="setPage(currentPage - 1)">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+                <a class="page-link" (click)="setPage(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="setPage(currentPage + 1)">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

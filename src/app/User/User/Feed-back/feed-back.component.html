@@ -1,0 +1,70 @@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h4 class="text-primary">{{ websiteSettings?.bannerText }}</h4>
+            <ul class="list-unstyled">
+                <li>📍 {{ websiteSettings?.footerAddress }}</li>
+                <li>📞 {{ websiteSettings?.footerPhone }}</li>
+                <li>📧 {{ websiteSettings?.footerEmail }}</li>
+            </ul>
+            <div class="md-12 mb-3 mt-4" style="width: 100%; height: 400px;">
+                <div [innerHTML]="safeGoogleMapEmbedLink"></div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="text-primary mb-3">Liên hệ</h4>
+
+            <form [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()">
+                <div class="mb-3">
+                    <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="fullname" placeholder="Họ và tên" />
+                    <div *ngIf="(isSubmitted || feedbackForm.controls['fullname'].touched) && feedbackForm.controls['fullname'].invalid"
+                        class="invalid-feedback d-block">
+                        Họ và tên không được để trống.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" formControlName="phone" placeholder="Số điện thoại" />
+                    <div *ngIf="(isSubmitted || feedbackForm.controls['phone'].touched) && feedbackForm.controls['phone'].invalid"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="feedbackForm.controls['phone'].errors?.['required']">Số điện thoại không được để
+                            trống.</div>
+                        <div *ngIf="feedbackForm.controls['phone'].errors?.['pattern']">Số điện thoại phải gồm 10 chữ số
+                            và bắt đầu bằng số 0.</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" formControlName="email" placeholder="Email" />
+                    <div *ngIf="(isSubmitted || feedbackForm.controls['email'].touched) && feedbackForm.controls['email'].invalid"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="feedbackForm.controls['email'].errors?.['required']">Email không được để trống.
+                        </div>
+                        <div *ngIf="feedbackForm.controls['email'].errors?.['email']">Vui lòng nhập đúng định dạng
+                            email.</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ý kiến của bạn <span class="text-danger">*</span></label>
+                    <textarea class="form-control" formControlName="content" rows="4"
+                        placeholder="Cho chúng tôi biết phản hồi của bạn"></textarea>
+                    <div *ngIf="(isSubmitted || feedbackForm.controls['content'].touched) && feedbackForm.controls['content'].invalid"
+                        class="invalid-feedback d-block">
+                        Vui lòng nhập nội dung câu hỏi.
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">GỬI Ý KIẾN</button>
+            </form>
+
+            <div *ngIf="successMessage" class="alert alert-success mt-3">
+                {{ successMessage }}
+            </div>
+        </div>
+    </div>
+</div>
