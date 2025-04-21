@@ -417,33 +417,6 @@ export class UploadfilePdfListComponent implements OnInit {
     selectedFolderId: number | null = null; // ID thư mục được chọn
     selectedFile: File | null = null; // File pdf được chọn
 
-    // // Xử lý upload pdf
-    // uploadPdf(): void {
-    //     if (!this.selectedFile) {
-    //         this.showSuccessMessage("Vui lòng chọn một tệp pdf!");
-    //         return;
-    //     }
-
-    //     if (!this.selectedFolderId) {
-    //         this.showSuccessMessage("Vui lòng chọn thư mục!");
-    //         return;
-    //     }
-
-    //     // Gọi API upload ảnh
-    //     this.uploadPdfService.uploadPdf(this.selectedFile, this.selectedFolderId).subscribe({
-    //         next: (image) => {
-    //             this.showSuccessMessage("Upload pdf thành công!");
-    //             this.resetForm(); 
-    //             this.loadFolderPdf();
-    //             this.loadPostPdf();
-    //         },
-    //         error: (err) => {
-    //             console.error('Lỗi khi upload pdf:', err);
-    //             this.showErrorMessage("Lỗi khi upload pdf: " + err.message);
-    //         }
-    //     });
-    // }
-
     // Reset form sau khi upload thành công
     resetForm(): void {
         this.selectedFile = null;
@@ -473,14 +446,47 @@ export class UploadfilePdfListComponent implements OnInit {
     }
 
     page: number = 1;
-    pageSize: number = 4;
+    pageSize: number = 10;
 
     get totalPages(): number {
         return Math.ceil(this.filteredPostPdf.length / this.pageSize);
     }
 
-    getPaginationArray(): number[] {
-        return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+    // getPaginationArray(): number[] {
+    //     return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+    // }
+
+    
+    getPaginationArray(): (number | string)[] {
+        const total = this.totalPages;
+        const current = this.page;
+        const delta = 2; // Số trang trước/sau trang hiện tại
+
+        const range: (number | string)[] = [];
+        const rangeWithDots: (number | string)[] = [];
+
+        for (let i = 1; i <= total; i++) {
+            if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+            }
+        }
+
+        let last: number | null = null;
+        for (let i of range) {
+            if (last && typeof i === 'number' && i - last > 1) {
+            rangeWithDots.push('...');
+            }
+            rangeWithDots.push(i);
+            last = typeof i === 'number' ? i : last;
+        }
+
+        return rangeWithDots;
+    }
+
+    onPageClick(p: number | string): void {
+        if (typeof p === 'number') {
+            this.page = p;
+        }
     }
 
     // Xử lý upload pdf

@@ -2,349 +2,448 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Layout</title>
-    <link rel="stylesheet" href="/src/assets/css/bootstrap.min.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Layout</title>
+        <link rel="stylesheet" href="/src/assets/css/bootstrap.min.css">
+    </head>
 
-<body>
-    <div class="sidebar" [ngStyle]="{'background-color': websiteSettingsForm.sidebarBackgroundColor}"
-        [ngClass]="{'collapsed': isCollapsed}">
-        <img *ngIf="websiteSettingsForm?.logoUrl" [src]="getImageWithFallback(websiteSettingsForm.logoUrl, 0)"
-            alt="Logo" class="img-fluid logo" style="border-radius: 50%;">
-        <hr style="border-top: 3px solid white; font-weight: bold;">
-        <ul class="nav flex-column" style="color: #fffffffa;"
-            [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">MAIN</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-dashboard" class="nav-link" [ngClass]="{'active': activeItem === 0}"
-                    (click)="setActiveItem(0)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-speedometer2" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Dashboard</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">TIN TỨC</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-categories" class="nav-link" [ngClass]="{'active': activeItem === 2}"
-                    (click)="setActiveItem(2)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-menu-button-wide" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Danh mục</span>
-                </a>
-                <a routerLink="/admin/app-news-events" class="nav-link" [ngClass]="{'active': activeItem === 3}"
-                    (click)="setActiveItem(3)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-calendar-event" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Bài viết Tin tức</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">VĂN BẢN - PHÁP LUẬT</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-categories-documents" class="nav-link"
-                    [ngClass]="{'active': activeItem === 4}" (click)="setActiveItem(4)"
-                    [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-list" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Danh mục</span>
-                </a>
-                <a routerLink="/admin/app-documents" class="nav-link" [ngClass]="{'active': activeItem === 5}"
-                    (click)="setActiveItem(5)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-file-earmark-text" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Văn bản & Pháp luật</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">THỦ TỤC HÀNH CHÍNH</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-categories-field" class="nav-link" [ngClass]="{'active': activeItem === 6}"
-                    (click)="setActiveItem(6)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-list" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Danh mục</span>
-                </a>
-                <a routerLink="/admin/app-procedure" class="nav-link" [ngClass]="{'active': activeItem === 7}"
-                    (click)="setActiveItem(7)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-file-earmark-text" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Thủ tục & Hành chính</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">THÔNG TIN CHUNG</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-categories-introduce" class="nav-link"
-                    [ngClass]="{'active': activeItem === 8}" (click)="setActiveItem(8)"
-                    [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-bookmark-star" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Giới thiệu tổng quan</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">LIÊN HỆ</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-feedbacks" class="nav-link" [ngClass]="{'active': activeItem === 9}"
-                    (click)="setActiveItem(9)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-headset" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Thông tin Liên hệ</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">HỆ THỐNG FILE</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-uploadfile-image-list" class="nav-link"
-                    [ngClass]="{'active': activeItem === 10}" (click)="setActiveItem(10)"
-                    [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-headset" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Hình ảnh</span>
-                </a>
-                <a routerLink="/admin/app-uploadfile-pdf-list" class="nav-link"
-                    [ngClass]="{'active': activeItem === 11}" (click)="setActiveItem(11)"
-                    [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-headset" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">File Pdf</span>
-                </a>
-            </li>
-            <div style="margin-left: 20px; font-weight: 500;" *ngIf="!isCollapsed">TÀI KHOẢN</div>
-            <li class="nav-item" style="padding: 10px 0px;">
-                <a routerLink="/admin/app-accounts" class="nav-link" [ngClass]="{'active': activeItem === 12}"
-                    (click)="setActiveItem(12)" [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
-                    <i class="bi bi-person" style="padding: 0px 10px;"></i>
-                    <span *ngIf="!isCollapsed">Accounts</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+    <body>
+        <div class="sidebar"
+            [ngStyle]="{'background-color': websiteSettingsForm.sidebarBackgroundColor}"
+            [ngClass]="{'collapsed': isCollapsed}">
+            <img *ngIf="websiteSettingsForm?.logoUrl"
+                [src]="getImageWithFallback(websiteSettingsForm.logoUrl, 0)"
+                alt="Logo" routerLink="/admin/app-dashboard"
+                class="img-fluid logo" style="border-radius: 50%;">
+            <hr style="border-top: 3px solid white; font-weight: bold;">
+            <ul class="nav flex-column" style="color: #fffffffa;"
+                [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">MAIN</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-dashboard" class="nav-link"
+                        [ngClass]="{'active': activeItem === 0}"
+                        (click)="setActiveItem(0)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-speedometer2"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Dashboard</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">TIN TỨC</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-categories" class="nav-link"
+                        [ngClass]="{'active': activeItem === 2}"
+                        (click)="setActiveItem(2)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-menu-button-wide"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Danh mục</span>
+                    </a>
+                    <a routerLink="/admin/app-news-events" class="nav-link"
+                        [ngClass]="{'active': activeItem === 3}"
+                        (click)="setActiveItem(3)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-calendar-event"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Bài viết Tin tức</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">VĂN BẢN - PHÁP LUẬT</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-categories-documents"
+                        class="nav-link"
+                        [ngClass]="{'active': activeItem === 4}"
+                        (click)="setActiveItem(4)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-list" style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Danh mục</span>
+                    </a>
+                    <a routerLink="/admin/app-documents" class="nav-link"
+                        [ngClass]="{'active': activeItem === 5}"
+                        (click)="setActiveItem(5)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-file-earmark-text"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Văn bản & Pháp luật</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">THỦ TỤC HÀNH CHÍNH</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-categories-field" class="nav-link"
+                        [ngClass]="{'active': activeItem === 6}"
+                        (click)="setActiveItem(6)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-list" style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Danh mục</span>
+                    </a>
+                    <a routerLink="/admin/app-procedure" class="nav-link"
+                        [ngClass]="{'active': activeItem === 7}"
+                        (click)="setActiveItem(7)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-bank" style="padding: 0px 10px"></i>
+                        <span *ngIf="!isCollapsed">Thủ tục & Hành chính</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">THÔNG TIN CHUNG</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-categories-introduce"
+                        class="nav-link"
+                        [ngClass]="{'active': activeItem === 8}"
+                        (click)="setActiveItem(8)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-bookmark-star"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Giới thiệu tổng quan</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">LIÊN HỆ</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-feedbacks" class="nav-link"
+                        [ngClass]="{'active': activeItem === 9}"
+                        (click)="setActiveItem(9)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-headset" style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Thông tin Liên hệ</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">HỆ THỐNG FILE</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-uploadfile-image-list"
+                        class="nav-link"
+                        [ngClass]="{'active': activeItem === 10}"
+                        (click)="setActiveItem(10)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-images" style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Hình ảnh</span>
+                    </a>
+                    <a routerLink="/admin/app-uploadfile-pdf-list"
+                        class="nav-link"
+                        [ngClass]="{'active': activeItem === 11}"
+                        (click)="setActiveItem(11)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-file-earmark-pdf"
+                            style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">File Pdf</span>
+                    </a>
+                </li>
+                <div style="margin-left: 20px; font-weight: 500;"
+                    *ngIf="!isCollapsed">TÀI KHOẢN</div>
+                <li class="nav-item" style="padding: 10px 0px;">
+                    <a routerLink="/admin/app-accounts" class="nav-link"
+                        [ngClass]="{'active': activeItem === 12}"
+                        (click)="setActiveItem(12)"
+                        [ngStyle]="{'color': websiteSettingsForm.sidebarTextColor}">
+                        <i class="bi bi-person" style="padding: 0px 10px;"></i>
+                        <span *ngIf="!isCollapsed">Accounts</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-
-    <!-- Modal Cài Đặt Website -->
-    <div class="modal fade show d-block settings-modal" *ngIf="isSettingsOpen">
-        <div class="modal-dialog modal-lg" style="max-width: 1000px;">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: cornflowerblue;">
-                    <h5 class="modal-title" id="websiteSettingsModalLabel" style="font-weight: bold">CÀI ĐẶT WEBSITE
-                    </h5>
-                </div>
-                <div class="modal-body">
-                    <form (ngSubmit)="saveWebsiteSettings()">
-                        <h6>Thông Tin Chung</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Tên Website:</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.websiteName"
-                                name="websiteName" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Tên Banner Website:</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.bannerText"
-                                name="bannerText" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Dòng chữ chạy</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.textRunning"
-                                name="textRunning" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Logo:</label>
-                            <input type="file" class="form-control" (change)="onFileSelected($event)"
-                                accept="image/*" />
-
-                            <!-- Hiển thị ảnh xem trước -->
-                            <img *ngIf="websiteSettingsForm.logoUrl"
-                                [src]="getImageWithFallback(websiteSettingsForm.logoUrl, 0)" alt="Logo Preview"
-                                class="img-thumbnail mt-2" width="100">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Banner</label>
-                            <input type="file" class="form-control" (change)="onFileSelected1($event)"
-                                accept="image/*" />
-
-                            <!-- Hiển thị ảnh xem trước -->
-                            <img *ngIf="websiteSettingsForm.bannerUrl"
-                                [src]="getImageWithFallback(websiteSettingsForm.bannerUrl, 0)" alt="Logo Preview"
-                                class="img-thumbnail mt-2" width="100">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">GoogleMap URL:</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.googleMapEmbedLink"
-                                name="googleMapEmbedLink" required />
-                        </div>
-
-                        <h6>Cài Đặt Giao Diện</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Màu nền menu:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.menuBackgroundColor" name="menuBackgroundColor" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Màu chữ menu:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.menuTextColor" name="menuTextColor" />
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Màu nền footer:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.footerBackgroundColor"
-                                    name="footerBackgroundColor" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Màu chữ footer:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.footerTextColor" name="footerTextColor" />
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Màu chữ Banner</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.bannnerTextColor" name="bannnerTextColor" />
-                            </div>
-                        </div>
-
-                        <h6>Thông Tin Footer</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.footerAddress"
-                                name="footerAddress" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Số điện thoại:</label>
-                            <input type="text" class="form-control" [(ngModel)]="websiteSettingsForm.footerPhone"
-                                name="footerPhone" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Email:</label>
-                            <input type="email" class="form-control" [(ngModel)]="websiteSettingsForm.footerEmail"
-                                name="footerEmail" />
-                        </div>
-
-                        <h6>Cài Đặt Quản Trị Viên</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Màu nền Sidebar:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.sidebarBackgroundColor"
-                                    name="sidebarBackgroundColor" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Màu nền Header:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.headerBackgroundColor"
-                                    name="headerBackgroundColor" />
+        <!-- Modal Cài Đặt Website -->
+        <div class="modal fade show d-block settings-modal"
+            *ngIf="isSettingsOpen">
+            <div class="modal-dialog modal-lg" style="max-width: 1000px;">
+                <div class="modal-content">
+                    <div class="modal-header"
+                        style="background-color: cornflowerblue;">
+                        <h5 class="modal-title" id="websiteSettingsModalLabel"
+                            style="font-weight: bold">CÀI ĐẶT WEBSITE
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="saveWebsiteSettings()">
+                            <h6>Thông Tin Chung</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Tên Website:</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.websiteName"
+                                    name="websiteName" required />
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Màu chữ Sidebar:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.sidebarTextColor" name="sidebarTextColor" />
+                            <div class="mb-3">
+                                <label class="form-label">Tên Banner
+                                    Website:</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.bannerText"
+                                    name="bannerText" required />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Màu chữ Header:</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.headerTextColor" name="headerTextColor" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Dòng chữ chạy</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.textRunning"
+                                    name="textRunning" />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Theme</label>
-                                <input type="color" class="form-control form-control-color"
-                                    [(ngModel)]="websiteSettingsForm.themeColor" name="themeColor" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Logo:</label>
+                                <input type="file" class="form-control"
+                                    (change)="onFileSelected($event)"
+                                    accept="image/*" />
+
+                                <!-- Hiển thị ảnh xem trước -->
+                                <img *ngIf="websiteSettingsForm.logoUrl"
+                                    [src]="getImageWithFallback(websiteSettingsForm.logoUrl, 0)"
+                                    alt="Logo Preview"
+                                    class="img-thumbnail mt-2" width="100">
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Lưu lại</button>
-                        </div>
-                    </form>
+
+                            <div class="mb-3">
+                                <label class="form-label">Banner</label>
+                                <input type="file" class="form-control"
+                                    (change)="onFileSelected1($event)"
+                                    accept="image/*" />
+
+                                <!-- Hiển thị ảnh xem trước -->
+                                <img *ngIf="websiteSettingsForm.bannerUrl"
+                                    [src]="getImageWithFallback(websiteSettingsForm.bannerUrl, 0)"
+                                    alt="Logo Preview"
+                                    class="img-thumbnail mt-2" width="100">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">GoogleMap URL:</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.googleMapEmbedLink"
+                                    name="googleMapEmbedLink" required />
+                            </div>
+
+                            <h6>Cài Đặt Giao Diện</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu nền
+                                        menu:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.menuBackgroundColor"
+                                        name="menuBackgroundColor" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu chữ
+                                        menu:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.menuTextColor"
+                                        name="menuTextColor" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu nền
+                                        footer:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.footerBackgroundColor"
+                                        name="footerBackgroundColor" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu chữ
+                                        footer:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.footerTextColor"
+                                        name="footerTextColor" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu chữ
+                                        Banner</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.bannnerTextColor"
+                                        name="bannnerTextColor" />
+                                </div>
+                            </div>
+
+                            <h6>Thông Tin Footer</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ:</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.footerAddress"
+                                    name="footerAddress" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại:</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.footerPhone"
+                                    name="footerPhone" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email:</label>
+                                <input type="email" class="form-control"
+                                    [(ngModel)]="websiteSettingsForm.footerEmail"
+                                    name="footerEmail" />
+                            </div>
+
+                            <h6>Cài Đặt Quản Trị Viên</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu nền
+                                        Sidebar:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.sidebarBackgroundColor"
+                                        name="sidebarBackgroundColor" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu nền
+                                        Header:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.headerBackgroundColor"
+                                        name="headerBackgroundColor" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu chữ
+                                        Sidebar:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.sidebarTextColor"
+                                        name="sidebarTextColor" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Màu chữ
+                                        Header:</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.headerTextColor"
+                                        name="headerTextColor" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Theme</label>
+                                    <input type="color"
+                                        class="form-control form-control-color"
+                                        [(ngModel)]="websiteSettingsForm.themeColor"
+                                        name="themeColor" />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit"
+                                    class="btn btn-primary">Lưu lại</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Nút mở modal -->
-    <!-- <button type="button" class="btn fixed-settings-button" (click)="toggleSettings()">
+        <!-- Nút mở modal -->
+        <!-- <button type="button" class="btn fixed-settings-button" (click)="toggleSettings()">
         <i class="bi bi-gear"></i>
     </button> -->
 
-    <button type="button" class="btn fixed-settings-button" (click)="toggleSettings()">
-        <i class="bi bi-gear" [class.rotating]="isRotating"></i>
-    </button>
+        <button type="button" class="btn fixed-settings-button"
+            (click)="toggleSettings()">
+            <i class="bi bi-gear" [class.rotating]="isRotating"></i>
+        </button>
 
+        <!--Phần main-->
+        <main class="main-content" [ngClass]="{'collapsed': isCollapsed}">
+            <div class="header-bar"
+                [ngStyle]="{'background-color': websiteSettingsForm.headerBackgroundColor, }">
+                <!-------Nút 3 gạch---------->
+                <div style="margin-left: 20px;">
+                    <button (click)="toggleSidebar()" class="btn btn-light">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="search" placeholder="Tìm kiếm"
+                        aria-label="Search">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                </div>
 
-    <!--Phần main-->
-    <main class="main-content" [ngClass]="{'collapsed': isCollapsed}">
-        <div class="header-bar" [ngStyle]="{'background-color': websiteSettingsForm.headerBackgroundColor, }">
-            <!-------Nút 3 gạch---------->
-            <div style="margin-left: 20px;">
-                <button (click)="toggleSidebar()" class="btn btn-light">
-                    <i class="bi bi-list"></i>
-                </button>
+                <!-- Navbar -->
+                <div class="navbar navbar-expand-lg ms-auto">
+                    <div class="container">
+                        <!-- Đảm bảo navbar không bị collapse khi thu nhỏ màn hình -->
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                    id="userDropdown" role="button" 
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    [ngStyle]="{'color': websiteSettingsForm.headerTextColor}">
+                                    <i class="bi bi-person"></i> {{ username }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end"
+                                    aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item"
+                                            routerLink="/admin/app-accounts-info">Thông
+                                            tin cá nhân</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Trang
+                                            Home (User)</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            (click)="logout()">Đăng
+                                            xuất</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="search-box">
-                <input type="search" placeholder="Tìm kiếm" aria-label="Search">
-                <button type="submit"><i class="bi bi-search"></i></button>
+            <nav aria-label="breadcrumb" style="padding: 5px 20px">
+                <div class="breadcrumb-container">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a
+                                    routerLink="/admin/app-dashboard">Home</a></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page">{{ currentBreadcrumb }}</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Datetime Picker -->
+                    <div class="datetime-container">
+                        <input type="datetime-local" id="current-time"
+                            class="form-control"
+                            [value]="getCurrentDateTime()" />
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Alert thông báo thành công -->
+            <div *ngIf="successMessage"
+                class="alert alert-success alert-border-left alert-dismissible fade show"
+                role="alert">
+                <i class="ri-notification-off-line me-2 align-middle"></i>
+                <strong>Thông báo: </strong> {{ successMessage }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"
+                    (click)="successMessage=''"></button>
             </div>
 
-            <!-- Navbar -->
-            <div class="navbar navbar-expand-lg ms-auto">
+            <section
+                style="flex: 1; background-color:#f3f6f9; padding: 10px 0px;"
+                [ngStyle]="{'background-color': websiteSettingsForm.themeColor}">
                 <div class="container">
-                    <!-- Đảm bảo navbar không bị collapse khi thu nhỏ màn hình -->
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false"
-                                [ngStyle]="{'color': websiteSettingsForm.headerTextColor}">
-                                <i class="bi bi-person"></i> {{ username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" routerLink="/admin/app-accounts-info">Thông tin cá nhân</a>
-                                </li>
-                                <li><a class="dropdown-item" href="#">Trang Home (User)</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" (click)="logout()">Đăng xuất</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <router-outlet></router-outlet>
+                    <!-- Đây là nơi hiển thị các component con -->
                 </div>
-            </div>
-        </div>
-        <nav aria-label="breadcrumb" style="padding: 5px 20px">
-            <div class="breadcrumb-container">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a routerLink="/admin/app-dashboard">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ currentBreadcrumb }}</li>
-                    </ol>
-                </nav>
+            </section>
+        </main>
 
-                <!-- Datetime Picker -->
-                <div class="datetime-container">
-                    <input type="datetime-local" id="current-time" class="form-control"
-                        [value]="getCurrentDateTime()" />
-                </div>
-            </div>
-        </nav>
-
-        <!-- Alert thông báo thành công -->
-        <div *ngIf="successMessage" class="alert alert-success alert-border-left alert-dismissible fade show"
-            role="alert">
-            <i class="ri-notification-off-line me-2 align-middle"></i>
-            <strong>Thông báo: </strong> {{ successMessage }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                (click)="successMessage=''"></button>
-        </div>
-
-        <section style="flex: 1; background-color:#f3f6f9; padding: 10px 0px;"
-            [ngStyle]="{'background-color': websiteSettingsForm.themeColor}">
-            <div class="container">
-                <router-outlet></router-outlet> <!-- Đây là nơi hiển thị các component con -->
-            </div>
-        </section>
-    </main>
-
-</body>
+    </body>
 
 </html>

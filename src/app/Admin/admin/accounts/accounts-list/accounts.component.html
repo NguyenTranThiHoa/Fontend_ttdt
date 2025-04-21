@@ -24,9 +24,10 @@
         <button type="submit"><i class="bi bi-search"></i></button>
     </div>
     <div>
-        <button class="btn btn-primary" (click)="openCreateModal()"
+        <button class="btn btn-primary" (click)="openCreateModal()" style="padding: 5px 30px; background-color: #90cdf4; color: black; font-weight: 600;"
             [disabled]="!isAdmin && (!permissions || !permissions.canAddUser)">
-            <i class="bi bi-plus-circle"></i> THÊM TÀI KHOẢN
+        <i class="bi bi-plus-circle" style="padding: 0px 10px; color: blue;"></i>
+        THÊM MỚI
         </button>
     </div>
 </div>
@@ -156,7 +157,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Modal xác nhận nâng cấp lên Admin -->
 <div id="confirmUpgradeModal" class="modal fade" tabindex="-1" aria-hidden="true">

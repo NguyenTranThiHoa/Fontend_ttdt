@@ -9,8 +9,6 @@ import { environment } from '../../../../environment';
   providedIn: 'root'
 })
 export class DashboardService {
-  // private apiUrl = 'https://localhost:7253/api/Statistics';
-  // private apiUrl1 = 'https://localhost:7253/api/News_events';
 
   private apiUrl = `${environment.apiBaseUrl}/Statistics`;
   private apiUrl1 = `${environment.apiBaseUrl}/News_events`;
@@ -56,8 +54,11 @@ export class DashboardService {
   }
 
   // Lấy số lượt xem bài viết theo ngày
-  GetNewsViewsOverTime(): Observable<{ date: string; totalViews: number }[]> {
-    return this.http.get<{ date: string; totalViews: number }[]>(`${this.apiUrl}/GetNewsViewsOverTime`, { headers: this.getAuthHeaders() });
-  }
+  // GetNewsViewsOverTime(): Observable<{ date: string; totalViews: number }[]> {
+  //   return this.http.get<{ date: string; totalViews: number }[]>(`${this.apiUrl}/GetNewsViewsOverTime`, { headers: this.getAuthHeaders() });
+  // }
 
+  GetNewsViewsOverTime(): Observable<{ date: string; totalViewsNews: number; totalViewsDocs: number }[]> {
+    return this.http.get<{ date: string; totalViewsNews: number; totalViewsDocs: number }[]>(`${this.apiUrl}/GetNewsViewsOverTime`, { headers: this.getAuthHeaders() });
+  }
 }

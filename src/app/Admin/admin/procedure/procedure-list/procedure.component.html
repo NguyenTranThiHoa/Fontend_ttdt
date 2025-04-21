@@ -54,13 +54,13 @@
 <div class="controls">
     <div>
         <button type="button" class="btn btn-danger" (click)="deleteSelectedProcedure()"
-            style="background-color: #ffffff; font-weight: 600; color: black;">
+            style="background-color: #fc8181; font-weight: 600; color: black;">
             <i class="bi bi-trash" style="padding: 0px 10px; color: red;"></i>XÓA TẤT CẢ
         </button>
     </div>
 
     <button type="button" class="btn btn-primary" (click)="openCreateModal()"
-        style="padding: 6px 30px; background-color: #ffffff; font-weight: 600; color: black;">
+        style="padding: 6px 30px; background-color: #90cdf4; font-weight: 600; color: black;">
         <i class="bi bi-plus-circle" style="padding: 0px 10px; color: blue;"></i>
         THÊM MỚI
     </button>
@@ -139,18 +139,6 @@
                                     required />
                             </div>
                         </div>
-
-                        <!-- Hàng thứ hai: Chọn danh mục và tài khoản -->
-                        <!-- <div class="col-md-6">
-                            <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="account" style="font-weight: bold;">Chọn tài khoản</label>
-                                <select [(ngModel)]="procedureForm.id_account" name="id_account" class="form-select">
-                                    <option *ngFor="let account of accounts" [value]="account.id_account">
-                                        {{ account.username }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div> -->
 
                         <div class="col-md-6">
                             <div class="mb-3" style="padding: 0px 10px;">
@@ -295,7 +283,7 @@
                             class="bi bi-trash"></i></button>
                 </td>
                 <td>
-                    <a [href]="'https://ttdt2503.id.vn/procedures/' + [formatName(news_event.id_thutuc)]" target="_blank"
+                    <a [href]="'https://ttdt2503.id.vn/procedures/' + formatName(news_event.id_thutuc)" target="_blank"
                         class="btn btn-info btn-sm me-2">
                         <i class="bi bi-eye"></i>
                     </a>
@@ -370,11 +358,11 @@
     aria-hidden="true" style="padding-top: 70px;">
     <div class="modal-dialog modal-lg" style="max-width: 1200px;">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: cadetblue;">
+            <div class="modal-header" style="background-color: #c5cfcf">
                 <h5 class="modal-title">Chọn Hình Ảnh</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" style="background-color: burlywood;">
+            <div class="modal-body" style="background-color: #f2f1f1">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card shadow-sm p-3">
@@ -414,20 +402,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let image of filteredPostImage; let i = index">
-                                            <td>{{ i + 1 }}</td>
-                                            <!-- <td>
-                                                <img *ngIf="image.filePath"
-                                                    [src]="'https://api.ttdt2503.id.vn/api/images/' + image.filePath"
-                                                    style="width: 80px; height: auto;">
-                                            </td> -->
+                                        <tr
+                                            *ngFor="let image of filteredPostImage | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                                            <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                                             <td>
-                                                <img *ngIf="image.filePath" [src]="'https://api.ttdt2503.id.vn/api/images/' + image.filePath"
-                                                    (error)="onImageError($event)" style="width: 80px; height: auto; border-radius: 6px;">
+                                                <img *ngIf="image.filePath" [src]="getImageUrl(image)"
+                                                    (error)="handleImageError($event, image)"
+                                                    style="width: 80px; height: auto; border-radius: 6px;">
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm"
-                                                    (click)="insertImageToEditor(image.filePath)">
+                                                    (click)="insertImageToEditor(image)">
                                                     <i class="bi bi-check-circle"></i> Chọn
                                                 </button>
                                             </td>
@@ -437,6 +422,23 @@
                                 <div *ngIf="filteredPostImage.length === 0" class="text-center">Không có hình ảnh nào.
                                 </div>
                             </div>
+                            <!-- Phân trang -->
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
+                                <ul class="pagination">
+                                    <li class="page-item" [class.disabled]="page === 1">
+                                        <a class="page-link" (click)="page = page - 1">&laquo;</a>
+                                    </li>
+                            
+                                    <li class="page-item" *ngFor="let p of getPaginationArray_1()" [class.active]="p === page"
+                                        [class.disabled]="p === '...'">
+                                        <a class="page-link" (click)="onPageClick(p)">{{ p }}</a>
+                                    </li>
+                            
+                                    <li class="page-item" [class.disabled]="page === totalPages1">
+                                        <a class="page-link" (click)="page = page + 1">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>

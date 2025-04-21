@@ -54,7 +54,7 @@ export class CategoriesIntroduceComponent implements OnInit{
 
     successMessage: string = '';
     page: number = 1;
-    pageSize: number = 6;
+    pageSize: number = 10;
 
     selectedCategoryId: number | null = null;
     searchQuery = '';
@@ -76,6 +76,12 @@ export class CategoriesIntroduceComponent implements OnInit{
         this.loadIntroduce();
         this.loadFolder();
         this.loadPostImage();
+
+        this.apiDomains = [
+            'https://api.ttdt2503.id.vn',
+            'https://api.ttdt03.id.vn',
+            'https://api.congtt123.id.vn',
+        ]
     }
 
     loadCategories_introduce(): void {
@@ -129,10 +135,14 @@ export class CategoriesIntroduceComponent implements OnInit{
         this.showModal('category_Modal');
     }
     
+    // Sửa chỗ này
     openEdit_Modal(introduce: Introduce): void {
         this.isEdit_Mode = true;
         this.introduceForm = { ...introduce };
-        this.imagePreview = introduce.image_url ? 'https://localhost:7253/api/images/' + introduce.image_url : null;
+        
+        this.imagePreviewDomainIndex = 0; // reset domain fallback
+        this.imagePreview = introduce.image_url || null; // Lưu path gốc thôi, domain xử lý bên HTML rồi
+  
         this.introduceForm.description = introduce.formatHTML; // Gán giá trị của formatHTML vào biến quillContent
         console.log('Danh sách được chọn để sửa:', this.introduceForm);
         this.showModal('category_Modal');
@@ -470,6 +480,7 @@ export class CategoriesIntroduceComponent implements OnInit{
 
     imagePreview: string | null = null;
 
+    // Sửa chỗ này
     onImageSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
         if (input?.files?.[0]) {
@@ -828,71 +839,133 @@ export class CategoriesIntroduceComponent implements OnInit{
         }
 
     
-    insertImageToEditor(imageUrl: string) {
-    const quill = this.quillEditorInstance;
+    // insertImageToEditor(imageUrl: string) {
+    //     const quill = this.quillEditorInstance;
+        
+    //     if (quill) {
+    //         const range = quill.getSelection(true); // ✅ Lấy vị trí con trỏ hiện tại
+    //         if (range) {
+    //         quill.insertEmbed(range.index, 'image', `https://localhost:7253/api/images/${imageUrl}`);
+    //         quill.setSelection(range.index + 1); // ✅ Di chuyển con trỏ sau ảnh
+    //         }
+
+    //         // ✅ Cập nhật nội dung `news_eventsForm.content`
+    //         this.introduceForm.description = quill.root.innerHTML;
+    //     }
+
+    //     // ✅ Ẩn modal sau khi chọn ảnh
+    //     const imageModalElement = document.getElementById('imageSelectorModal');
+    //     if (imageModalElement) {
+    //         const imageModalInstance = bootstrap.Modal.getInstance(imageModalElement) || new bootstrap.Modal(imageModalElement);
+    //         imageModalInstance.hide();
+    //     }
+
+    //     console.log("✅ Ảnh đã chèn vào Quill:", `https://localhost:7253/api/images/${imageUrl}`);
+    //     }
+
+    //     selectedImageName: string = "";
+
+    //     selectImage(imagePath: string, imageName: string) {
+    //     this.selectedImageName = imageName;
+    //     this.imagePreview = `https://localhost:7253/api/images/${imagePath}`;
+
+    //     // Ẩn modal sau khi chọn ảnh
+    //     const modalElement = document.getElementById('imageSelectorModal');
+    //     if (modalElement) {
+    //         (new bootstrap.Modal(modalElement)).hide();
+    //     }
+    // }
+
+    // Sửa chỗ này
+      getFullImageUrl(imagePath: string, domainIndex = 0): string {
+        const safePath = this.getSafeImagePath(imagePath);
+        const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+        return `${domain}/api/images/${safePath}`;
+      }
     
-    if (quill) {
-        const range = quill.getSelection(true); // ✅ Lấy vị trí con trỏ hiện tại
-        if (range) {
-        quill.insertEmbed(range.index, 'image', `https://localhost:7253/api/images/${imageUrl}`);
-        quill.setSelection(range.index + 1); // ✅ Di chuyển con trỏ sau ảnh
+      insertImageToEditor(image: any) {
+        const quill = this.quillEditorInstance;
+    
+        if (quill) {
+          const range = quill.getSelection(true); 
+          if (range) {
+            const domain = this.apiDomains[image.domainIndex] || this.apiDomains[0];
+            const filePath = this.getSafeImagePath(image.filePath || '');
+    
+            quill.insertEmbed(range.index, 'image', `${domain}/api/images/${filePath}`);
+            quill.setSelection(range.index + 1);
+          }
+    
+            // ✅ Cập nhật nội dung `news_eventsForm.content`
+            this.introduceForm.description = quill.root.innerHTML;
         }
-
-        // ✅ Cập nhật nội dung `news_eventsForm.content`
-        this.introduceForm.description = quill.root.innerHTML;
+    
+        const imageModalElement = document.getElementById('imageSelectorModal');
+        if (imageModalElement) {
+          const imageModalInstance = bootstrap.Modal.getInstance(imageModalElement) || new bootstrap.Modal(imageModalElement);
+          imageModalInstance.hide();
+        }
+    
+        console.log("✅ Ảnh đã chèn vào Quill:", image);
     }
-
-    // ✅ Ẩn modal sau khi chọn ảnh
-    const imageModalElement = document.getElementById('imageSelectorModal');
-    if (imageModalElement) {
-        const imageModalInstance = bootstrap.Modal.getInstance(imageModalElement) || new bootstrap.Modal(imageModalElement);
-        imageModalInstance.hide();
-    }
-
-    console.log("✅ Ảnh đã chèn vào Quill:", `https://localhost:7253/api/images/${imageUrl}`);
-    }
-
+    
     selectedImageName: string = "";
-
+    
     selectImage(imagePath: string, imageName: string) {
-    this.selectedImageName = imageName;
-    this.imagePreview = `https://localhost:7253/api/images/${imagePath}`;
-
-    // Ẩn modal sau khi chọn ảnh
-    const modalElement = document.getElementById('imageSelectorModal');
-    if (modalElement) {
-        (new bootstrap.Modal(modalElement)).hide();
-    }
+        this.selectedImageName = imageName;
+    
+        this.imagePreview = this.getImageUrl({ filePath: imagePath, domainIndex: 0 });
+    
+        // Ẩn modal sau khi chọn ảnh
+        const modalElement = document.getElementById('imageSelectorModal');
+        if (modalElement) {
+          (new bootstrap.Modal(modalElement)).hide();
+        }
     }
 
     openImageSelectorModal1() {
-    const modalElement = document.getElementById('imageSelectorModal1');
-    if (modalElement) {
-        const modalInstance = new bootstrap.Modal(modalElement);
-        modalInstance.show();
-    } else {
-        console.error("Không tìm thấy modal với ID 'imageSelectorModal1'");
-    }
+        const modalElement = document.getElementById('imageSelectorModal1');
+        if (modalElement) {
+            const modalInstance = new bootstrap.Modal(modalElement);
+            modalInstance.show();
+        } else {
+            console.error("Không tìm thấy modal với ID 'imageSelectorModal1'");
+        }
     }
 
     selectedImageName1: string = "";
 
+    // selectImage1(imagePath: string, imageName: string) {
+    //     // Lưu đường dẫn ảnh vào form
+    //     this.introduceForm.image_url = imagePath;
+
+    //     // Hiển thị tên ảnh trong input
+    //     this.selectedImageName1 = imageName;
+
+    //     // Hiển thị ảnh xem trước
+    //     this.imagePreview = `https://localhost:7253/api/images/${imagePath}`;
+
+    //     // Ẩn modal sau khi chọn ảnh
+    //     const modalElement = document.getElementById('imageSelectorModal1');
+    //     if (modalElement) {
+    //         (new bootstrap.Modal(modalElement)).hide();
+    //     }
+    // }
+
+    
     selectImage1(imagePath: string, imageName: string) {
-    // Lưu đường dẫn ảnh vào form
-    this.introduceForm.image_url = imagePath;
-
-    // Hiển thị tên ảnh trong input
-    this.selectedImageName1 = imageName;
-
-    // Hiển thị ảnh xem trước
-    this.imagePreview = `https://localhost:7253/api/images/${imagePath}`;
-
-    // Ẩn modal sau khi chọn ảnh
-    const modalElement = document.getElementById('imageSelectorModal1');
-    if (modalElement) {
-        (new bootstrap.Modal(modalElement)).hide();
-    }
-    }
+        this.introduceForm.image_url = imagePath;
+        this.selectedImageName1 = imageName;
+        this.imagePreview = imagePath;  // <- thêm dòng này để xem trước
+        this.imagePreviewDomainIndex = 0; // Reset lại index domain cho ảnh preview
+        const modalElement = document.getElementById('imageSelectorModal1');
+        if (modalElement) {
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+      }
     
     truncateHTML(description: string, limit: number = 100): string {
         if (!description) return '';
@@ -915,4 +988,173 @@ export class CategoriesIntroduceComponent implements OnInit{
     }
 
 
+    getSafeImagePath(imagePath: string): string {
+        return imagePath.replace(/\\/g, "/"); // Đảm bảo đúng định dạng URL
+    }
+  
+  // Hiện ra doamin cho cả 3
+  apiDomains: string[] = [];
+
+  getImageUrl(image: any): string {
+    if (!this.apiDomains || this.apiDomains.length === 0) {
+      console.warn("⚠️ apiDomains chưa được khởi tạo hoặc rỗng.");
+      return '';
+    }
+    
+    if (image.domainIndex === undefined || image.domainIndex === null) {
+      image.domainIndex = 0;
+    }
+    
+    const domain = this.apiDomains[image.domainIndex] || this.apiDomains[0];
+    const filePath = this.getSafeImagePath(image.filePath || '');
+    
+    return `${domain}/api/images/${filePath}`;
+  }
+  
+  handleImageError(event: Event, image: any) {
+    if (!this.apiDomains || this.apiDomains.length === 0) {
+      console.warn("⚠️ apiDomains chưa được khởi tạo hoặc rỗng.");
+      return;
+    }
+    
+    if (image.domainIndex === undefined || image.domainIndex === null) {
+      image.domainIndex = 0;
+    }
+    
+    image.domainIndex++;
+    
+    if (image.domainIndex < this.apiDomains.length) {
+      const imgElement = event.target as HTMLImageElement;
+      imgElement.src = this.getImageUrl(image);
+    } else {
+      console.warn('❌ Không còn domain nào khả dụng cho ảnh:', image.filePath);
+    }
+  }
+
+  /*************************************************/
+  getImageWithFallback(imagePath: string, domainIndex: number = 0): string {
+    const safePath = this.getSafeImagePath(imagePath);
+    const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+    return `${domain}/api/images/${safePath}`;
+  }
+
+  getImageUrlWithFallback(obj: any, field: string): string {
+    const domainIndex = obj.domainIndex ?? 0;
+    return this.getImageWithFallback(obj[field], domainIndex);
+  }
+
+  handleImageError1(event: Event, obj: any, field: string): void {
+    if (obj.domainIndex === undefined || obj.domainIndex === null) {
+      obj.domainIndex = 0; // Gán lần đầu
+    }
+  
+    obj.domainIndex++;
+  
+    if (obj.domainIndex < this.apiDomains.length) {
+      const target = event.target as HTMLImageElement;
+      target.src = this.getImageWithFallback(obj[field], obj.domainIndex);
+    } else {
+      console.warn('❌ Không còn domain fallback khả dụng cho ảnh:', obj[field]);
+    }
+  }
+
+  /*****************************Domain đại diện**************************/
+  imagePreviewDomainIndex: number = 0;
+
+  getImageWithFallbackString(path: string, domainIndex: number = 0): string {
+    const safePath = this.getSafeImagePath(path);
+    const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+    return `${domain}/api/images/${safePath}`;
+  }
+
+  handleImageErrorPreview(event: Event, path: string): void {
+    if (!(this.imagePreviewDomainIndex >= 0)) {
+      this.imagePreviewDomainIndex = 0;
+    }
+    this.imagePreviewDomainIndex++;
+    if (this.imagePreviewDomainIndex < this.apiDomains.length) {
+      const target = event.target as HTMLImageElement;
+      target.src = this.getImageWithFallbackString(path, this.imagePreviewDomainIndex);
+    } else {
+      console.warn('❌ Không còn domain fallback khả dụng cho ảnh preview:', path);
+    }
+  }
+
+    /**************************Trang cho hình đại diện*************************/
+    get totalPages2(): number {
+        return Math.ceil(this.filteredPostImage.length / this.pageSize);
+    }
+
+    getPaginationArray2(): (number | string)[] {
+        const total = this.totalPages2;
+        const current = this.page;
+        const delta = 2; // Số trang trước/sau trang hiện tại
+
+        const range: (number | string)[] = [];
+        const rangeWithDots: (number | string)[] = [];
+
+        for (let i = 1; i <= total; i++) {
+            if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+            }
+        }
+
+        let last: number | null = null;
+        for (let i of range) {
+            if (last && typeof i === 'number' && i - last > 1) {
+            rangeWithDots.push('...');
+            }
+            rangeWithDots.push(i);
+            last = typeof i === 'number' ? i : last;
+        }
+
+        return rangeWithDots;
+    }
+
+    onPageClick2(p: number | string): void {
+        if (typeof p === 'number') {
+            this.page = p;
+        }
+    }
+
+    // getPaginationArray2(): number[] {
+    //     return Array(this.totalPages2).fill(0).map((_, i) => i + 1);
+    // }
+        
+    /***********************************Phân trang cho quill****************************/
+    get totalPages1(): number {
+        return Math.ceil(this.filteredPostImage.length / this.pageSize);
+    }
+
+    getPaginationArray1(): (number | string)[] {
+        const total = this.totalPages1;
+        const current = this.page;
+        const delta = 2; // Số trang trước/sau trang hiện tại
+
+        const range: (number | string)[] = [];
+        const rangeWithDots: (number | string)[] = [];
+
+        for (let i = 1; i <= total; i++) {
+            if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+            }
+        }
+
+        let last: number | null = null;
+        for (let i of range) {
+            if (last && typeof i === 'number' && i - last > 1) {
+            rangeWithDots.push('...');
+            }
+            rangeWithDots.push(i);
+            last = typeof i === 'number' ? i : last;
+        }
+
+        return rangeWithDots;
+    }
+
+    onPageClick(p: number | string): void {
+        if (typeof p === 'number') {
+            this.page = p;
+        }
+    }
 }

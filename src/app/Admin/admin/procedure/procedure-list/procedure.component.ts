@@ -49,7 +49,7 @@ export class ProcedureComponent implements OnInit {
   isEditMode = false;
   successMessage = '';
   page: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 10;
   selectedCategoryId: number | null = null;
   isAllSelected: boolean = false;
   selectedProcedureId: number | null = null;
@@ -77,7 +77,13 @@ export class ProcedureComponent implements OnInit {
     this.loadFolder();  // Load danh sách thư mục
     this.loadPostImage();   // Load danh sách ảnh
 
-    this.loadUserInfo();  
+    this.loadUserInfo(); 
+    
+    this.apiDomains = [
+      'https://api.ttdt2503.id.vn',
+      'https://api.ttdt03.id.vn',
+      'https://api.congtt123.id.vn',
+    ]
   }
 
   loadUserInfo() {
@@ -511,6 +517,49 @@ export class ProcedureComponent implements OnInit {
     return Array(this.totalPages).fill(0).map((_, i) => i + 1);
   }
 
+
+  /********************Phân trang cho hình ảnh quill***********************************/
+
+  get totalPages1(): number {
+    return Math.ceil(this.filteredPostImage.length / this.pageSize);
+  }
+
+  // getPaginationArray1(): number[] {
+  //   return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  // }
+  
+  getPaginationArray_1(): (number | string)[] {
+    const total = this.totalPages1;
+    const current = this.page;
+    const delta = 2; // Số trang trước/sau trang hiện tại
+
+    const range: (number | string)[] = [];
+    const rangeWithDots: (number | string)[] = [];
+
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+        }
+    }
+
+    let last: number | null = null;
+    for (let i of range) {
+        if (last && typeof i === 'number' && i - last > 1) {
+        rangeWithDots.push('...');
+        }
+        rangeWithDots.push(i);
+        last = typeof i === 'number' ? i : last;
+    }
+
+    return rangeWithDots;
+  }
+
+  onPageClick(p: number | string): void {
+    if (typeof p === 'number') {
+        this.page = p;
+    }
+  }
+
   /**************************************************************************/
 
   @ViewChild('quillEditor', { static: false }) quillEditorRef!: ElementRef;
@@ -668,20 +717,35 @@ export class ProcedureComponent implements OnInit {
     });
   }
 
+  // formatName(name: string | null | undefined): string {
+  //   if (!name) return "unknown-document";
+
+  //   return name
+  //     .trim()
+  //     .toLowerCase()
+  //     .normalize("NFD") // Chuyển ký tự có dấu thành dạng gốc (e.g., "đ" → "d̛")
+  //     .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
+  //     .replace(/đ/g, "d").replace(/Đ/g, "D") // Chuyển "đ", "Đ" thành "d", "D"
+  //     .replace(/[\/,().]/g, "-") // Thay "/", ",", ".", "(", ")" thành "-"
+  //     .replace(/[^a-z0-9-]/g, "-") // Chỉ giữ chữ cái, số, và dấu "-"
+  //     .replace(/-+/g, "-") // Loại bỏ dấu "-" lặp lại
+  //     .replace(/^-+|-+$/g, ""); // Xóa dấu "-" ở đầu hoặc cuối chuỗi
+  // }
+
   formatName(name: string | null | undefined): string {
     if (!name) return "unknown-document";
 
     return name
       .trim()
-      .toLowerCase()
-      .normalize("NFD") // Chuyển ký tự có dấu thành dạng gốc (e.g., "đ" → "d̛")
-      .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
-      .replace(/đ/g, "d").replace(/Đ/g, "D") // Chuyển "đ", "Đ" thành "d", "D"
-      .replace(/[\/,().]/g, "-") // Thay "/", ",", ".", "(", ")" thành "-"
-      .replace(/[^a-z0-9-]/g, "-") // Chỉ giữ chữ cái, số, và dấu "-"
-      .replace(/-+/g, "-") // Loại bỏ dấu "-" lặp lại
-      .replace(/^-+|-+$/g, ""); // Xóa dấu "-" ở đầu hoặc cuối chuỗi
+      .normalize("NFD")                          // Bỏ dấu tiếng Việt
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d").replace(/Đ/g, "D")    // Giữ lại dấu chấm
+      .replace(/[\/,()]/g, "-")                 // Giữ nguyên dấu chấm, không replace "."
+      .replace(/[^a-zA-Z0-9.-]/g, "-")          // Cho phép chữ, số, dấu gạch và dấu chấm
+      .replace(/-+/g, "-")                      // Loại bỏ gạch nối lặp
+      .replace(/^-+|-+$/g, "");                 // Xoá gạch đầu/cuối
   }
+
 
   /*********************************************************Chọn ảnh từ giao diện****************************************************/
       activeFolderId: number | null = null; // Thêm thuộc tính này
@@ -874,66 +938,134 @@ export class ProcedureComponent implements OnInit {
     }
   
           
-    quillEditorInstance: any;
-    insertImageToEditor(imageUrl: string) {
-    const quill = this.quillEditorInstance;
-    
-    if (quill) {
-      const range = quill.getSelection(true); // ✅ Lấy vị trí con trỏ hiện tại
-      if (range) {
-        quill.insertEmbed(range.index, 'image', `https://api.ttdt2503.id.vn/api/images/${imageUrl}`);
-        quill.setSelection(range.index + 1); // ✅ Di chuyển con trỏ sau ảnh
+  quillEditorInstance: any;
+  
+    getFullImageUrl(imagePath: string, domainIndex = 0): string {
+      const safePath = this.getSafeImagePath(imagePath);
+      const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+      return `${domain}/api/images/${safePath}`;
+    }
+  
+    insertImageToEditor(imageUrl: any) {
+      const quill = this.quillEditorInstance;
+  
+      if (quill) {
+        const range = quill.getSelection(true);
+        if (range) {
+          const domain = this.apiDomains[imageUrl.domainIndex] || this.apiDomains[0];
+          const filePath = this.getSafeImagePath(imageUrl.filePath || '');
+  
+          quill.insertEmbed(range.index, 'imageUrl', `${domain}/api/images/${filePath}`);
+          quill.setSelection(range.index + 1);
+        }
+  
+         this.procedureForm.description = quill.root.innerHTML;
       }
   
-      // ✅ Cập nhật nội dung `news_eventsForm.content`
-      this.procedureForm.description = quill.root.innerHTML;
+      const imageModalElement = document.getElementById('imageSelectorModal');
+      if (imageModalElement) {
+        const imageModalInstance = bootstrap.Modal.getInstance(imageModalElement) || new bootstrap.Modal(imageModalElement);
+        imageModalInstance.hide();
+      }
+  
+      console.log("✅ Ảnh đã chèn vào Quill:", imageUrl);
     }
-  
-    // ✅ Ẩn modal sau khi chọn ảnh
-    const imageModalElement = document.getElementById('imageSelectorModal');
-    if (imageModalElement) {
-      const imageModalInstance = bootstrap.Modal.getInstance(imageModalElement) || new bootstrap.Modal(imageModalElement);
-      imageModalInstance.hide();
-    }
-  
-    console.log("✅ Ảnh đã chèn vào Quill:", `https://api.ttdt2503.id.vn/api/images/${imageUrl}`);
-  }
-  
     
-    selectedImageName: string = "";
+  selectedImageName: string = "";
   
     selectImage(imagePath: string, imageName: string) {
-      this.selectedImageName = imageName;
-      this.imagePreview = `https://api.ttdt2503.id.vn/api/images/${imagePath}`;
-  
-      // Ẩn modal sau khi chọn ảnh
-      const modalElement = document.getElementById('imageSelectorModal');
-      if (modalElement) {
-        (new bootstrap.Modal(modalElement)).hide();
+        this.selectedImageName = imageName;
+    
+        this.imagePreview = this.getImageUrl({ filePath: imagePath, domainIndex: 0 });
+    
+        // Ẩn modal sau khi chọn ảnh
+        const modalElement = document.getElementById('imageSelectorModal');
+        if (modalElement) {
+          (new bootstrap.Modal(modalElement)).hide();
+        }
       }
-    }
-  
+    
     openImageSelectorModal1() {
-    const modalElement = document.getElementById('imageSelectorModal1');
-      if (modalElement) {
-        const modalInstance = new bootstrap.Modal(modalElement);
-        modalInstance.show();
-      } else {
-        console.error("Không tìm thấy modal với ID 'imageSelectorModal1'");
-      }
-    }
+      const modalElement = document.getElementById('imageSelectorModal1');
+        if (modalElement) {
+          const modalInstance = new bootstrap.Modal(modalElement);
+          modalInstance.show();
+        } else {
+          console.error("Không tìm thấy modal với ID 'imageSelectorModal1'");
+        }
+  }
+    
+  selectedImageName1: string = "";
   
   imagePreview: string | null = null;
   
-  // Domain cho cả 2
-  onImageError(event: any) {
-    const brokenUrl = event.target.src;
-    const fileName = brokenUrl.split('/api/images/')[1];
+  // Hiện ra doamin cho cả 3
+  apiDomains: string[] = [];
 
-    if (brokenUrl.includes('ttdt2503')) {
-      event.target.src = 'https://api.ttdt03.id.vn/api/images/' + fileName;
+  getImageUrl(image: any): string {
+    if (!this.apiDomains || this.apiDomains.length === 0) {
+      console.warn("⚠️ apiDomains chưa được khởi tạo hoặc rỗng.");
+      return '';
+    }
+    
+    if (image.domainIndex === undefined || image.domainIndex === null) {
+      image.domainIndex = 0;
+    }
+    
+    const domain = this.apiDomains[image.domainIndex] || this.apiDomains[0];
+    const filePath = this.getSafeImagePath(image.filePath || '');
+    
+    return `${domain}/api/images/${filePath}`;
+  }
+  
+  handleImageError(event: Event, image: any) {
+    if (!this.apiDomains || this.apiDomains.length === 0) {
+      console.warn("⚠️ apiDomains chưa được khởi tạo hoặc rỗng.");
+      return;
+    }
+    
+    if (image.domainIndex === undefined || image.domainIndex === null) {
+      image.domainIndex = 0;
+    }
+    
+    image.domainIndex++;
+    
+    if (image.domainIndex < this.apiDomains.length) {
+      const imgElement = event.target as HTMLImageElement;
+      imgElement.src = this.getImageUrl(image);
     } else {
-      event.target.src = 'assets/images/no-image.png';
+      console.warn('❌ Không còn domain nào khả dụng cho ảnh:', image.filePath);
+    }
+  }
+
+  getSafeImagePath(imagePath: string): string {
+    return imagePath.replace(/\\/g, "/"); // Đảm bảo đúng định dạng URL
+  }
+
+  /*************************************************/
+  getImageWithFallback(imagePath: string, domainIndex: number = 0): string {
+    const safePath = this.getSafeImagePath(imagePath);
+    const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+    return `${domain}/api/images/${safePath}`;
+  }
+
+  getImageUrlWithFallback(obj: any, field: string): string {
+    const domainIndex = obj.domainIndex ?? 0;
+    return this.getImageWithFallback(obj[field], domainIndex);
+  }
+
+  handleImageError1(event: Event, obj: any, field: string): void {
+    if (obj.domainIndex === undefined || obj.domainIndex === null) {
+      obj.domainIndex = 0; // Gán lần đầu
+    }
+  
+    obj.domainIndex++;
+  
+    if (obj.domainIndex < this.apiDomains.length) {
+      const target = event.target as HTMLImageElement;
+      target.src = this.getImageWithFallback(obj[field], obj.domainIndex);
+    } else {
+      console.warn('❌ Không còn domain fallback khả dụng cho ảnh:', obj[field]);
     }
   }
 

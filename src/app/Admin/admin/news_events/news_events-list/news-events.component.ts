@@ -54,7 +54,7 @@ export class NewsEventsComponent implements OnInit {
   isEditMode = false;
   successMessage = '';
   page: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 10 ;
   selectedCategoryId: number | null = null;
   isAllSelected: boolean = false;
   selectedNews_EventsId: number | null = null;
@@ -309,7 +309,6 @@ export class NewsEventsComponent implements OnInit {
     console.log('Danh sách được chọn để sửa:', this.news_eventsForm);
     this.showModal('categoryModal');
   }
-
 
   validateNewsEventsForm(): boolean {
     this.errorMessage = ''; // Reset lỗi trước khi kiểm tra
@@ -631,12 +630,45 @@ export class NewsEventsComponent implements OnInit {
     return Array(this.totalPages).fill(0).map((_, i) => i + 1);
   }
 
+  // getPaginationArray1(): number[] {
+  //   return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  // }
+
+  /********************Phân trang cho hình ảnh quill***********************************/
   get totalPages1(): number {
     return Math.ceil(this.filteredPostImage.length / this.pageSize);
   }
 
-  getPaginationArray1(): number[] {
-    return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  getPaginationArray_1(): (number | string)[] {
+    const total = this.totalPages1;
+    const current = this.page;
+    const delta = 2; // Số trang trước/sau trang hiện tại
+
+    const range: (number | string)[] = [];
+    const rangeWithDots: (number | string)[] = [];
+
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+        }
+    }
+
+    let last: number | null = null;
+    for (let i of range) {
+        if (last && typeof i === 'number' && i - last > 1) {
+        rangeWithDots.push('...');
+        }
+        rangeWithDots.push(i);
+        last = typeof i === 'number' ? i : last;
+    }
+
+    return rangeWithDots;
+  }
+
+  onPageClick(p: number | string): void {
+    if (typeof p === 'number') {
+        this.page = p;
+    }
   }
 
   /**************************Trang cho hình đại diện*************************/
@@ -644,8 +676,40 @@ export class NewsEventsComponent implements OnInit {
     return Math.ceil(this.filteredPostImage.length / this.pageSize);
   }
 
-  getPaginationArray2(): number[] {
-    return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  // getPaginationArray2(): number[] {
+  //   return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  // }
+
+  getPaginationArray_2(): (number | string)[] {
+    const total = this.totalPages2;
+    const current = this.page;
+    const delta = 2; // Số trang trước/sau trang hiện tại
+
+    const range: (number | string)[] = [];
+    const rangeWithDots: (number | string)[] = [];
+
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+        }
+    }
+
+    let last: number | null = null;
+    for (let i of range) {
+        if (last && typeof i === 'number' && i - last > 1) {
+        rangeWithDots.push('...');
+        }
+        rangeWithDots.push(i);
+        last = typeof i === 'number' ? i : last;
+    }
+
+    return rangeWithDots;
+  }
+
+  onPageClick_2(p: number | string): void {
+    if (typeof p === 'number') {
+        this.page = p;
+    }
   }
 
   /****************************Editor***************************/
@@ -1067,7 +1131,6 @@ export class NewsEventsComponent implements OnInit {
     console.log("✅ Ảnh đã chèn vào Quill:", image);
   }
 
-
   selectedImageName: string = "";
 
   // selectImage(imagePath: string, imageName: string) {
@@ -1105,45 +1168,11 @@ export class NewsEventsComponent implements OnInit {
 
   selectedImageName1: string = "";
 
-  // selectImage1(imagePath: string, imageName: string) {
-  //   // Lưu đường dẫn ảnh vào form
-  //   this.news_eventsForm.image = imagePath;
-
-  //   // Hiển thị tên ảnh trong input
-  //   this.selectedImageName1 = imageName;
-
-  //   // Hiển thị ảnh xem trước
-  //   this.imagePreview = `https://api.ttdt2503.id.vn/api/images/${imagePath}`;
-
-  //   // Ẩn modal sau khi chọn ảnh
-  //   const modalElement = document.getElementById('imageSelectorModal1');
-  //   if (modalElement) {
-  //       const modalInstance = bootstrap.Modal.getInstance(modalElement); // Lấy instance modal đã mở
-  //       if (modalInstance) {
-  //           modalInstance.hide();
-  //       }
-  //   }
-  // }
-
-  // selectImage1(imagePath: string, imageName: string) {
-  //   this.news_eventsForm.image = imagePath;
-  //   this.selectedImageName1 = imageName;
-
-  //   this.imagePreview = this.getImageUrl({ filePath: imagePath, domainIndex: 0 });  // Luôn start từ domain đầu tiên
-
-  //   const modalElement = document.getElementById('imageSelectorModal1');
-  //   if (modalElement) {
-  //     const modalInstance = bootstrap.Modal.getInstance(modalElement);
-  //     if (modalInstance) {
-  //       modalInstance.hide();
-  //     }
-  //   }
-  // }
-
   selectImage1(imagePath: string, imageName: string) {
     this.news_eventsForm.image = imagePath;
     this.selectedImageName1 = imageName;
     this.imagePreview = imagePath;  // <- thêm dòng này để xem trước
+    this.imagePreviewDomainIndex = 0;  // Reset về domain đầu tiên
     const modalElement = document.getElementById('imageSelectorModal1');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement);

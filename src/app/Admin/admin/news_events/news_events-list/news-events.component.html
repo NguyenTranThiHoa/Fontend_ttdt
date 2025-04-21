@@ -52,12 +52,12 @@
 
 <div class="controls">
     <div>
-        <button type="button" class="btn btn-danger" (click)="deleteSelectedNews_Events()" style="background-color: #ffffff; font-weight: 600; color: black;">
+        <button type="button" class="btn btn-danger" (click)="deleteSelectedNews_Events()" style="background-color: #fc8181; font-weight: 600; color: black;">
             <i class="bi bi-trash" style="padding: 0px 10px; color: red;"></i>XÓA TẤT CẢ
         </button>        
     </div>
 
-    <button type="button" class="btn btn-primary" (click)="openCreateModal()" style="padding: 6px 30px; background-color: #ffffff; font-weight: 600; color: black;">
+    <button type="button" class="btn btn-primary" (click)="openCreateModal()" style="padding: 6px 30px; background-color: #90cdf4; font-weight: 600; color: black;">
         <i class="bi bi-plus-circle" style="padding: 0px 10px; color: blue;"></i>
         THÊM MỚI
     </button>    
@@ -99,13 +99,13 @@
 <!-- Modal thêm/sửa -->
 <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 1300px;">
+    <div class="modal-dialog modal-lg" style="max-width: 1200px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"
                     style="text-align: center; font-weight: bold; margin-left: 420px; font-family: 'Times New Roman', Times, serif;"
                     id="categoryModalLabel">
-                    {{ isEditMode ? 'SỬA' : 'THÊM' }} DANH MỤC TIN TỨC - SỰ KIỆN
+                    {{ isEditMode ? 'SỬA' : 'THÊM' }} DANH SÁCH TIN TỨC - SỰ KIỆN
                 </h4>
                 <button type="button" class="btn-close" (click)="hideModal(getModalInstance('categoryModal'))"></button>
             </div>
@@ -195,21 +195,10 @@
                                         <i class="bi bi-folder"></i> Chọn ảnh từ thư mục
                                     </button>
                                 </div>
-                                
-                                <!-- <div *ngIf="imagePreview" class="mt-2">
-                                    <img [src]="imagePreview" alt="Xem trước ảnh" class="img-thumbnail"
-                                        style="max-width: 200px; max-height: 200px;" />
-                                </div> -->
-
-                                <!-- <div *ngIf="imagePreview" class="mt-2">
-                                    <img *ngIf="imagePreview" [src]="getImageWithFallbackString(imagePreview, imagePreviewDomainIndex)"
-                                        (error)="handleImageErrorPreview($event, imagePreview)" alt="Xem trước ảnh" class="img-thumbnail"
-                                        style="max-width: 200px; max-height: 200px;">
-                                </div> -->
                                 <div *ngIf="imagePreview" class="mt-2">
-                                    <img [src]="getImageUrlWithFallback({ filePath: imagePreview, domainIndex: 0 }, 'filePath')"
-                                        (error)="handleImageError1($event, { filePath: imagePreview, domainIndex: 0 }, 'filePath')" alt="Xem trước ảnh"
-                                        class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+                                    <img [src]="getImageWithFallbackString(imagePreview, imagePreviewDomainIndex)"
+                                        (error)="handleImageErrorPreview($event, imagePreview)" alt="Xem trước ảnh" class="img-thumbnail"
+                                        style="max-width: 200px; max-height: 200px;" />
                                 </div>
                             </div>
                         </div>
@@ -296,9 +285,6 @@
                 <td>{{ getCategoryFullName(news_event) }}</td> <!-- Hiển thị tên danh mục -->
                 <td>{{ getAccounts_Name(news_event.id_account) }}</td> 
                 <td>
-                    <!-- <img *ngIf="news_event.image" [src]="'https://api.ttdt2503.id.vn/api/images/' + news_event.image" 
-                         style="width: 100px; height: auto;" alt="Image" /> -->
-
                     <img *ngIf="news_event.image" [src]="getImageUrlWithFallback(news_event, 'image')"
                         (error)="handleImageError1($event, news_event, 'image')" style="width: 100px; height: auto;" alt="Image" />
                 </td>                 
@@ -410,23 +396,11 @@
                                     <tbody>
                                         <tr *ngFor="let image of filteredPostImage | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                                             <td>{{ (page - 1) * pageSize + i + 1 }}</td>
-                                            <!-- <td>
-                                                <img *ngIf="image.filePath" [src]="'https://api.ttdt03.id.vn/api/images/' + image.filePath"
-                                                    style="width: 80px; height: auto;">
-                                            </td> -->
-                                            <!-- <td>
-                                                <img *ngIf="image.filePath" [src]="'https://api.ttdt2503.id.vn/api/images/' + image.filePath"
-                                                    (error)="onImageError1($event)" style="width: 80px; height: auto; border-radius: 6px;">
-                                            </td> -->
                                             <td>
                                                 <img *ngIf="image.filePath" [src]="getImageUrl(image)" (error)="handleImageError($event, image)"
                                                     style="width: 80px; height: auto; border-radius: 6px;">
                                             </td>
                                             <td>
-                                                <!-- <button class="btn btn-primary btn-sm"
-                                                    (click)="insertImageToEditor(image.filePath)">
-                                                    <i class="bi bi-check-circle"></i> Chọn
-                                                </button> -->
                                                 <button class="btn btn-primary btn-sm" (click)="insertImageToEditor(image)">
                                                     <i class="bi bi-check-circle"></i> Chọn
                                                 </button>
@@ -438,14 +412,17 @@
                                 </div>
                             </div>
                             <!-- Phân trang -->
-                            <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
                                 <ul class="pagination">
                                     <li class="page-item" [class.disabled]="page === 1">
                                         <a class="page-link" (click)="page = page - 1">&laquo;</a>
                                     </li>
-                                    <li class="page-item" *ngFor="let p of getPaginationArray1()" [class.active]="page === p">
-                                        <a class="page-link" (click)="page = p">{{ p }}</a>
+                            
+                                    <li class="page-item" *ngFor="let p of getPaginationArray_1()" [class.active]="p === page"
+                                        [class.disabled]="p === '...'">
+                                        <a class="page-link" (click)="onPageClick(p)">{{ p }}</a>
                                     </li>
+                            
                                     <li class="page-item" [class.disabled]="page === totalPages1">
                                         <a class="page-link" (click)="page = page + 1">&raquo;</a>
                                     </li>
@@ -550,14 +527,17 @@
                                 </div>
                             </div>
                             <!-- Phân trang -->
-                            <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
                                 <ul class="pagination">
                                     <li class="page-item" [class.disabled]="page === 1">
                                         <a class="page-link" (click)="page = page - 1">&laquo;</a>
                                     </li>
-                                    <li class="page-item" *ngFor="let p of getPaginationArray2()" [class.active]="page === p">
-                                        <a class="page-link" (click)="page = p">{{ p }}</a>
+                            
+                                    <li class="page-item" *ngFor="let p of getPaginationArray_2()" [class.active]="p === page"
+                                        [class.disabled]="p === '...'">
+                                        <a class="page-link" (click)="onPageClick_2(p)">{{ p }}</a>
                                     </li>
+                            
                                     <li class="page-item" [class.disabled]="page === totalPages2">
                                         <a class="page-link" (click)="page = page + 1">&raquo;</a>
                                     </li>

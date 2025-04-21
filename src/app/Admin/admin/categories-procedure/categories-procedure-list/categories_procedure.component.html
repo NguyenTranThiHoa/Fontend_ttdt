@@ -116,7 +116,7 @@
 <!-- Template đệ quy cho dropdown -->
 <ng-template #categoryOptions let-children let-level="level">
     <ng-container *ngFor="let child of children">
-        <option [value]="child.id_categories">{{ getCategoryFullName(child, level) }}</option>
+        <option [value]="child.id_Field">{{ getCategoryFullName(child, level) }}</option>
         <ng-container *ngIf="child.children && child.children.length > 0">
             <ng-container
                 *ngTemplateOutlet="categoryOptions; context: { $implicit: child.children, level: level + 1 }"></ng-container>
@@ -191,10 +191,10 @@
         <tr>
             <td><input type="checkbox" [(ngModel)]="child.selected" [name]="'checkbox-child-' + level + '-' + j"></td>
             <td>{{ child.id_Field }}</td>
-            <td [ngClass]="{'root-category': child.parentId === null}">
+            <td [ngClass]="{'root-category': child.fielParentId === null}">
                 {{ getCategoryFullName(child, level) }}
             </td>
-            <td>{{ getParentName(child.parentId) }}</td>
+            <td>{{ getParentName(child.fielParentId) }}</td>
             <td>
                 <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(child)"><i
                         class="bi bi-pencil"></i></button>

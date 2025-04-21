@@ -31,11 +31,11 @@
                 </div>
                 <!-- <img *ngIf="introduceDetail.image_url" style="height: 350px; align-content: center; object-fit: cover"
                     [src]="'https://api.ttdt03.id.vn/api/images/' + introduceDetail.image_url" class="img-fluid mt-3" -->
-                alt="Hình ảnh bài giới thiệu">
+                <!-- alt="Hình ảnh bài giới thiệu">
                 <img *ngIf="introduceDetail.image_url" [src]="getImageUrlWithFallback(introduceDetail, 'image_url')"
                     (error)="handleImageError($event, introduceDetail, 'image_url')"
                     style="height: 350px; align-content: center; object-fit: cover" class="img-fluid mt-3"
-                    alt="Hình ảnh bài giới thiệu" />
+                    alt="Hình ảnh bài giới thiệu" /> -->
 
                 <p class="card-text mt-2 content" [style.fontSize.px]="fontSize"
                     [innerHTML]="introduceDetail.formatHTML"></p>

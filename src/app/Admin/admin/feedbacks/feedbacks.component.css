@@ -206,3 +206,46 @@
     font-weight: 700;
     padding: 10px 10px;
 }
+
+/*****************************************/
+/* Icon animation - lắc nhẹ */
+@keyframes iconFloat {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Style chung cho icon trong các thẻ nhỏ */
+.small-card i {
+    font-size: 2rem;
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+    animation: iconFloat 2.5s infinite ease-in-out;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Hover: card nổi lên, icon to ra */
+.small-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.small-card:hover i {
+    transform: scale(1.3);
+    color: #ffc107;
+}
+
+/* Optional: thêm hiệu ứng viền phát sáng nhẹ khi hover */
+.small-card:hover {
+    border: 2px solid #fff;
+}

@@ -143,12 +143,6 @@
                                 <td>
                                     <!-- <img *ngIf="image.filePath" [src]="'https://api.ttdt03.id.vn/api/images/' + getSafeImagePath(image.filePath)"
                                         style="width: 100px; height: auto;" alt="Image" /> -->
-                                        <!-- <img [src]="'https://api.ttdt03.id.vn/api/images/' + getSafeImagePath(image.filePath)" (error)="onImageError($event)"
-                                            style="width: 100px; height: auto;" alt="Image" /> -->
-
-                                        <!-- <img [src]="'https://api.ttdt2503.id.vn/api/images/' + getSafeImagePath(image.filePath)" (error)="onImageError($event)"
-                                            style="width: 100px; height: auto;" alt="Image" /> -->
-
                                         <img *ngIf="image.filePath"
                                             [src]="getImageUrl(image)"
                                             (error)="handleImageError($event, image)"
@@ -178,21 +172,24 @@
                 </div>
 
                 <!-- Phân trang -->
-                <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
                     <ul class="pagination">
                         <li class="page-item" [class.disabled]="page === 1">
                             <a class="page-link" (click)="page = page - 1">&laquo;</a>
                         </li>
-                        <li class="page-item" *ngFor="let p of getPaginationArray()" [class.active]="page === p">
-                            <a class="page-link" (click)="page = p">{{ p }}</a>
+                
+                        <li class="page-item" *ngFor="let p of getPaginationArray()" [class.active]="p === page"
+                            [class.disabled]="p === '...'">
+                            <a class="page-link" (click)="onPageClick(p)">{{ p }}</a>
                         </li>
+                
                         <li class="page-item" [class.disabled]="page === totalPages">
                             <a class="page-link" (click)="page = page + 1">&raquo;</a>
                         </li>
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div> 
     </div>
 </div>
 
@@ -238,7 +235,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label>
-                        <select class="form-control" [(ngModel)]="folderForm.parentId" name="parentId">
+                        <select class="form-select" [(ngModel)]="folderForm.parentId" name="parentId">
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folder">
                                 <option [value]="folder.id_folder">{{ getFolderFullName(folder, 0) }}</option>
@@ -299,15 +296,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="moveImageModalLabel">Di Chuyển Ảnh</h5>
+                <h5 class="modal-title" id="moveImageModalLabel" style="margin-left: 150px;">DI CHUYỂN ẢNH</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('moveImageModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="moveImage(selectedImageId, selectedTargetFolderId)">
                     <div class="mb-3">
-                        <label for="targetFolderId" class="form-label">Chọn thư mục đích</label>
-                        <select class="form-control" [(ngModel)]="selectedTargetFolderId" name="targetFolderId"
+                        <label for="targetFolderId" class="form-label" style="font-weight: bold;">Chọn thư mục đích</label>
+                        <select class="form-select" [(ngModel)]="selectedTargetFolderId" name="targetFolderId"
                             required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folder">
@@ -319,7 +316,8 @@
                             </ng-container>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Di Chuyển</button>
+                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 130px; padding: 5px 30px;">
+                        <i class="bi bi-arrows-move" style="padding: 0px 10px;"></i>Di Chuyển</button>
                 </form>
             </div>
         </div>
@@ -350,30 +348,32 @@
 
 <!-- Modal Sửa Hình Ảnh -->
 <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editImageModalLabel">Sửa Hình Ảnh</h5>
+                <h5 class="modal-title" id="editImageModalLabel" style="margin-left: 350px;">SỬA HÌNH ẢNH</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('editImageModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="updateImage(selectedImageId, imageForm)">
                     <div class="mb-3">
-                        <label for="fileName" class="form-label">Tên Hình Ảnh</label>
+                        <label for="fileName" class="form-label" style="font-weight: bold;">Tên Hình Ảnh</label>
                         <input type="text" class="form-control" [(ngModel)]="imageForm.fileName" name="fileName"
                             required>
                     </div>
                     <div class="mb-3">
-                        <label for="file" class="form-label">Chọn Ảnh Mới</label>
-                        <input type="file" class="form-control" (change)="onImageSelected($event)" accept="image/*">
+                        <label for="file" class="form-label" style="font-weight: bold;">Chọn Ảnh Mới</label>
+                        <input type="file" class="form-control" (change)="onImageSelected($event)" accept="image/*" name="image" />
                         <div class="mt-3" *ngIf="imagePreview">
-                            <img [src]="imagePreview" alt="Xem trước ảnh" class="img-thumbnail"
+                            <img [src]="imagePreview" (error)="handleImageError($event, imageForm)" alt="Xem trước ảnh" class="img-thumbnail"
                                 style="max-width: 200px; max-height: 200px;">
                         </div>
+
                     </div>
+
                     <div class="mb-3">
-                        <label for="folder" class="form-label">Chọn Thư Mục</label>
+                        <label for="folder" class="form-label" style="font-weight: bold;">Chọn Thư Mục</label>
                         <select class="form-control" [(ngModel)]="imageForm.id_folder" name="folder" required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folder">
@@ -385,7 +385,8 @@
                             </ng-container>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 370px; padding: 5px 30px;">
+                        <i class="bi bi-save2" style="padding: 0px 10px;"></i>Lưu</button>
                 </form>
             </div>
         </div>

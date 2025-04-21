@@ -9,7 +9,6 @@ import { environment } from '../../../../environment';
   providedIn: 'root'
 })
 export class CategoriesFieldeService {
-  // private apiUrl = 'https://localhost:7253/api/Category_field';
 
   private apiUrl = `${environment.apiBaseUrl}/Category_field`;
 

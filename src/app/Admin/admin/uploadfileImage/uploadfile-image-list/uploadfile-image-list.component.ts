@@ -371,22 +371,22 @@ export class UploadfileImageListComponent implements OnInit {
     }
 
     // Mở modal sửa hình ảnh
-    openEditImageModal(image: PostImage): void {
-        this.selectedImageId = image.id_Image;
-        this.imageForm = { ...image }; // Gán dữ liệu hình ảnh được chọn vào form
-        this.imagePreview = image.filePath ? `https://ttdt2503.id.vn/api/images/${image.filePath}` : null;
-        this.showModal('editImageModal');
-    }
-
-    // // Mở modal sửa hình ảnh
     // openEditImageModal(image: PostImage): void {
     //     this.selectedImageId = image.id_Image;
     //     this.imageForm = { ...image }; // Gán dữ liệu hình ảnh được chọn vào form
-    //     this.imagePreview = image.filePath 
-    //         ? `https://api.ttdt2503.id.vn/api/images/${image.filePath}` 
-    //         : null;
+    //     this.imagePreview = image.filePath ? `https://ttdt2503.id.vn/api/images/${image.filePath}` : null;
     //     this.showModal('editImageModal');
     // }
+    openEditImageModal(image: PostImage): void {
+        this.selectedImageId = image.id_Image;
+        this.imageForm = { ...image };
+        
+        // Preview fallback theo domain
+        this.imagePreview = this.getImageUrl(this.imageForm);
+
+        this.showModal('editImageModal');
+    }
+
 
     // Xử lý khi chọn ảnh mới
     onImageSelected(event: any): void {
@@ -432,9 +432,42 @@ export class UploadfileImageListComponent implements OnInit {
         return Math.ceil(this.filteredPostImage.length / this.pageSize);
     }
 
-    getPaginationArray(): number[] {
-        return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+    // getPaginationArray(): number[] {
+    //     return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+    // }
+
+    getPaginationArray(): (number | string)[] {
+        const total = this.totalPages;
+        const current = this.page;
+        const delta = 2; // Số trang trước/sau trang hiện tại
+
+        const range: (number | string)[] = [];
+        const rangeWithDots: (number | string)[] = [];
+
+        for (let i = 1; i <= total; i++) {
+            if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+            }
+        }
+
+        let last: number | null = null;
+        for (let i of range) {
+            if (last && typeof i === 'number' && i - last > 1) {
+            rangeWithDots.push('...');
+            }
+            rangeWithDots.push(i);
+            last = typeof i === 'number' ? i : last;
+        }
+
+        return rangeWithDots;
     }
+
+    onPageClick(p: number | string): void {
+        if (typeof p === 'number') {
+            this.page = p;
+        }
+    }
+
 
     selectedFolderId: number | null = null; // ID thư mục được chọn
     selectedFile: File | null = null; // File ảnh được chọn

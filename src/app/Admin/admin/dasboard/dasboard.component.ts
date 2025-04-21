@@ -20,7 +20,6 @@ import { ActivatedRoute } from '@angular/router'; // ✅ Import thêm ActivatedR
 export class DasboardComponent {
   new_events: News_Events[] = []; 
   
-  
   constructor(
       private dashboardService: DashboardService,
       private cdr: ChangeDetectorRef,
@@ -30,9 +29,15 @@ export class DasboardComponent {
 
   ngOnInit(): void {
     this.loadStatistics(); 
-    this.loadTopViewedNews(3); // ✅ Hiển thị 5 bài viết xem nhiều nhất
+    this.loadTopViewedNews(4); // ✅ Hiển thị 5 bài viết xem nhiều nhất
     this.loadNewsViewsByCategory(); // ✅ Gọi hàm vẽ biểu đồ
     this.loadNewsViewsOverTime();
+
+    this.apiDomains = [
+      'https://api.ttdt2503.id.vn',
+      'https://api.ttdt03.id.vn',
+      'https://api.congtt123.id.vn',
+    ]
   }
 
   reloadPage(): void {
@@ -53,11 +58,84 @@ export class DasboardComponent {
     });
   }
 
+  // renderChart(): void {
+  //   const ctx = document.getElementById('statisticsChart') as HTMLCanvasElement;
+  //   const legendContainer = document.getElementById('statisticsLegend');
+
+  //   if (ctx) {
+  //     const chart = new Chart(ctx, {
+  //       type: 'doughnut',
+  //       data: {
+  //         labels: ['Tin tức', 'Văn bản', 'Thủ tục', 'Giới thiệu'],
+  //         datasets: [{
+  //           data: [
+  //             this.statistics.totalNewEvents,
+  //             this.statistics.totalDocuments,
+  //             this.statistics.totalProcedure,
+  //             this.statistics.totalIntroduces
+  //           ],
+  //           backgroundColor: [
+  //             '#D1FAE5', // $green-200
+  //             '#FEF9C3', // $yellow-200
+  //             '#FECACA', // $red-200
+  //             '#DBEAFE'  // $blue-200
+  //           ],
+  //           borderWidth: 1,
+  //           hoverOffset: 6
+  //         }]
+  //       },
+  //       options: {
+  //         responsive: false,
+  //         plugins: {
+  //           legend: { display: false } // tắt mặc định
+  //         },
+  //         animation: { duration: 0 }
+  //       }
+  //     });
+
+  //     const backgroundColors = chart.data.datasets[0].backgroundColor as string[];
+
+  //     if (legendContainer) {
+  //       legendContainer.innerHTML = chart.data.labels!.map((label, i) => `
+  //         <div>
+  //           <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background-color:${backgroundColors[i]};margin-right:6px;"></span>
+  //           ${label}
+  //         </div>
+  //       `).join('');
+  //     }
+  //   }
+  // }
+
   renderChart(): void {
     const ctx = document.getElementById('statisticsChart') as HTMLCanvasElement;
+    const legendContainer = document.getElementById('statisticsLegend');
+
+    const total = this.statistics.totalNewEvents +
+                  this.statistics.totalDocuments +
+                  this.statistics.totalProcedure +
+                  this.statistics.totalIntroduces;
+
+    // Plugin hiển thị số tổng ở trung tâm biểu đồ
+    const centerTextPlugin = {
+      id: 'centerText',
+      beforeDraw: function(chart: any) {
+        const { width, height } = chart;
+        const ctx = chart.ctx;
+        ctx.restore();
+        const fontSize = (height / 130).toFixed(2);
+        ctx.font = `${fontSize}em sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#1E3A8A'; // Màu chữ
+        const text = total.toString();
+        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+        const textY = height / 2;
+        ctx.fillText(text, textX, textY);
+        ctx.save();
+      }
+    };
 
     if (ctx) {
-      new Chart(ctx, {
+      const chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: ['Tin tức', 'Văn bản', 'Thủ tục', 'Giới thiệu'],
@@ -68,21 +146,47 @@ export class DasboardComponent {
               this.statistics.totalProcedure,
               this.statistics.totalIntroduces
             ],
-            backgroundColor: ['#36A2EB', '#FFCE56', '#4BC0C0', '#FF6384'],
+            backgroundColor: [
+              '#D1FAE5', // green-200
+              '#FEF9C3', // yellow-200
+              '#FECACA', // red-200
+              '#DBEAFE'  // blue-200
+            ],
+            borderWidth: 1,
+            hoverOffset: 6
           }]
         },
         options: {
-          responsive: true,
+          responsive: false,
           plugins: {
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }
+            legend: { display: false }
+          },
+          animation: { duration: 0 }
+        },
+        plugins: [centerTextPlugin]  // Chỉ dùng plugin hiển thị tổng số ở giữa
       });
+
+      const backgroundColors = chart.data.datasets[0].backgroundColor as string[];
+
+      if (legendContainer) {
+        const data = chart.data.datasets[0].data as number[];
+
+        legendContainer.innerHTML = chart.data.labels!.map((label, i) => {
+          const value = data[i];
+          const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+          return `
+            <div>
+              <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background-color:${backgroundColors[i]};margin-right:6px;"></span>
+              ${label}
+              <span>${value}</span> 
+              <span>(${percent}%)</span>
+            </div>
+          `;
+        }).join('');
+      }
     }
   }
-
+  
   formatName(name: string | null | undefined): string {
     if (!name) return "unknown-document";
 
@@ -137,7 +241,7 @@ export class DasboardComponent {
             datasets: [{
               label: 'Lượt xem theo danh mục',
               data: views,
-              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+              backgroundColor: ['rgba(64, 81, 137, 0.85)'],
               borderWidth: 1
             }]
           },
@@ -160,62 +264,106 @@ export class DasboardComponent {
   viewsOverTimeChart: any; // Lưu biểu đồ để tránh lỗi vẽ chồng
 
   loadNewsViewsOverTime(): void {
-    this.dashboardService.GetNewsViewsOverTime().subscribe((data) => {
-      console.log("📊 Dữ liệu API trả về:", data); // ✅ Kiểm tra dữ liệu API
+  this.dashboardService.GetNewsViewsOverTime().subscribe((data) => {
+    console.log("📊 Dữ liệu API trả về:", data);
 
-      if (!data || data.length === 0) {
-        console.warn("🚨 Không có dữ liệu lượt xem theo ngày.");
-        return;
-      }
+    if (!data || data.length === 0) {
+      console.warn("🚨 Không có dữ liệu lượt xem theo ngày.");
+      return;
+    }
 
-      const dates = data.map(item => item.date);
-      const views = data.map(item => item.totalViews);
+    const dates = data.map(item => item.date);
+    const newsViews = data.map(item => item.totalViewsNews);
+    const docViews = data.map(item => item.totalViewsDocs);
 
-      // 🔥 Xóa biểu đồ cũ trước khi vẽ lại (tránh lỗi chồng biểu đồ)
-      if (this.viewsOverTimeChart) {
-        this.viewsOverTimeChart.destroy();
-      }
+    if (this.viewsOverTimeChart) {
+      this.viewsOverTimeChart.destroy();
+    }
 
-      const ctx = document.getElementById('viewsOverTimeChart') as HTMLCanvasElement;
-      if (ctx) {
-        this.viewsOverTimeChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: dates,
-            datasets: [{
-              label: 'Lượt xem theo thời gian',
-              data: views,
-              borderColor: '#FF6384',
-              backgroundColor: 'rgba(255, 99, 132, 0.2)', // Màu nền nhẹ
+    const ctx = document.getElementById('viewsOverTimeChart') as HTMLCanvasElement;
+    if (ctx) {
+      this.viewsOverTimeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: 'Tin tức',
+              data: newsViews,
+              borderColor: '#3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
               fill: true,
-              tension: 0.3
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: { title: { display: true, text: "Ngày" } },
-              y: { title: { display: true, text: "Lượt xem" }, beginAtZero: true }
+              tension: 0.3,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: '#3B82F6'
+            },
+            {
+              label: 'Văn bản',
+              data: docViews,
+              borderColor: '#10B981',
+              backgroundColor: 'rgba(16, 185, 129, 0.2)',
+              fill: true,
+              tension: 0.3,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: '#10B981'
             }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: "Ngày" } },
+            y: { title: { display: true, text: "Lượt xem" }, beginAtZero: true }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
           }
-        });
-      } else {
-        console.error("❌ Không tìm thấy phần tử có id='viewsOverTimeChart'");
-      }
-    }, error => {
-      console.error("❌ Lỗi khi tải dữ liệu lượt xem theo ngày:", error);
-    });
+        }
+      });
+    } else {
+      console.error("❌ Không tìm thấy phần tử có id='viewsOverTimeChart'");
+    }
+  }, error => {
+    console.error("❌ Lỗi khi tải dữ liệu lượt xem theo ngày:", error);
+  });
+}
+
+
+
+  /*************************************************/
+  // Hiện ra doamin cho cả 3
+  apiDomains: string[] = [];
+
+  getSafeImagePath(imagePath: string): string {
+    return imagePath.replace(/\\/g, "/"); // Đảm bảo đúng định dạng URL
   }
 
-  // Domain cho cả 2
-  onImageError(event: any) {
-    const brokenUrl = event.target.src;
-    const fileName = brokenUrl.split('/api/images/')[1];
+  getImageWithFallback(imagePath: string, domainIndex: number = 0): string {
+    const safePath = this.getSafeImagePath(imagePath);
+    const domain = this.apiDomains[domainIndex] || this.apiDomains[0];
+    return `${domain}/api/images/${safePath}`;
+  }
 
-    if (brokenUrl.includes('ttdt2503')) {
-      event.target.src = 'https://api.ttdt03.id.vn/api/images/' + fileName;
+  getImageUrlWithFallback(obj: any, field: string): string {
+    const domainIndex = obj.domainIndex ?? 0;
+    return this.getImageWithFallback(obj[field], domainIndex);
+  }
+
+  handleImageError1(event: Event, obj: any, field: string): void {
+    if (obj.domainIndex === undefined || obj.domainIndex === null) {
+      obj.domainIndex = 0; // Gán lần đầu
+    }
+  
+    obj.domainIndex++;
+  
+    if (obj.domainIndex < this.apiDomains.length) {
+      const target = event.target as HTMLImageElement;
+      target.src = this.getImageWithFallback(obj[field], obj.domainIndex);
     } else {
-      event.target.src = 'assets/images/no-image.png';
+      console.warn('❌ Không còn domain fallback khả dụng cho ảnh:', obj[field]);
     }
   }
 

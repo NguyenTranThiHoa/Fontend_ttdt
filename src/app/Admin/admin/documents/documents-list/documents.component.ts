@@ -53,7 +53,7 @@ export class DocumentsComponent implements OnInit {
   isEditMode = false;
   successMessage = '';
   page: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 10;
   selectedCategoryId: number | null = null;
   isAllSelected: boolean = false;
   selectedDocumentsId: number | null = null;
@@ -738,6 +738,46 @@ export class DocumentsComponent implements OnInit {
   }
 
 
+  get totalPages1(): number {
+    return Math.ceil(this.filteredPostPdf.length / this.pageSize);
+  }
+
+  // getPaginationArray1(): number[] {
+  //   return Array(this.totalPages1).fill(0).map((_, i) => i + 1);
+  // }
+
+  getPaginationArray1(): (number | string)[] {
+    const total = this.totalPages1;
+    const current = this.page;
+    const delta = 2; // Số trang trước/sau trang hiện tại
+
+    const range: (number | string)[] = [];
+    const rangeWithDots: (number | string)[] = [];
+
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+        }
+    }
+
+    let last: number | null = null;
+    for (let i of range) {
+        if (last && typeof i === 'number' && i - last > 1) {
+        rangeWithDots.push('...');
+        }
+        rangeWithDots.push(i);
+        last = typeof i === 'number' ? i : last;
+    }
+
+    return rangeWithDots;
+  }
+
+  onPageClick(p: number | string): void {
+    if (typeof p === 'number') {
+        this.page = p;
+    }
+  }
+  
   /**************************************Hiện chi tiết***********************************************/
   // Các hàm điều chỉnh font size
   increaseFontSize(): void {
@@ -758,6 +798,9 @@ export class DocumentsComponent implements OnInit {
   selectedDocument: any = null;
   pdfLoaded: boolean = false;
   
+  safeDetailPdfUrl: SafeResourceUrl | null = null;
+  detailLoading: boolean = false;
+
   // Danh sách domain theo thứ tự ưu tiên
   domains: string[] = [
     'https://api.ttdt2503.id.vn',
@@ -771,47 +814,57 @@ export class DocumentsComponent implements OnInit {
     this.selectedDocument = document;
     this.currentDomainIndex = 0;
     this.pdfLoaded = false;
-    this.tryLoadPdf();
+    this.detailLoading = true;
+    this.tryLoadDetailPdf();
     
     // Mở modal
     this.showModal('detailModal');
   }
 
   // Thử load PDF từ domain hiện tại
-  tryLoadPdf(): void {
+  tryLoadDetailPdf(): void {
     if (!this.selectedDocument?.file_path) {
-      this.fileUrl = null;
-      return;
+        this.safeDetailPdfUrl = null;
+        this.detailLoading = false;
+        return;
     }
 
-    if (this.currentDomainIndex >= this.domains.length) {
-      console.warn('Đã thử tất cả domain nhưng không thành công');
-      this.fileUrl = null;
-      return;
-    }
-
+    const filePath = this.selectedDocument.file_path.replace(/\\/g, "/");
     const domain = this.domains[this.currentDomainIndex];
-    this.fileUrl = `${domain}/api/pdf/${this.selectedDocument.file_path}`;
-  }
+    const url = `${domain}/api/pdf/${filePath}`;
 
-  // Xử lý khi PDF load thành công
-  handlePdfLoad(): void {
-    this.pdfLoaded = true;
-    console.log(`PDF loaded successfully from ${this.domains[this.currentDomainIndex]}`);
-  }
+    this.http.head(url, { observe: 'response' }).subscribe({
+        next: (response) => {
+            if (response.status === 200) {
+                this.safeDetailPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+                this.detailLoading = false;
+                this.pdfLoaded = true;
+            } else {
+                this.loadNextDomainForDetailPdf();
+            }
+        },
+        error: () => {
+            this.loadNextDomainForDetailPdf();
+        },
+    });
+}
 
-  // Xử lý khi PDF load lỗi
-  handlePdfError(event: any): void {
-    if (this.pdfLoaded) return; // Nếu đã load thành công thì không xử lý lỗi
-    
-    this.currentDomainIndex++;
-    this.tryLoadPdf();
-  }
+handleDetailPdfLoad(): void {
+  this.pdfLoaded = true;
+  this.detailLoading = false;
+  console.log(`PDF loaded successfully from ${this.domains[this.currentDomainIndex]}`);
+}
 
-  // Tạo URL an toàn cho iframe
-  getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+loadNextDomainForDetailPdf(): void {
+  this.currentDomainIndex++;
+  if (this.currentDomainIndex < this.domains.length) {
+      this.tryLoadDetailPdf();
+  } else {
+      this.safeDetailPdfUrl = null;
+      this.detailLoading = false;
+      console.warn("Không thể load PDF từ bất kỳ domain nào.");
   }
+}
 
   // Tải file PDF về máy
   downloadFile(): void {

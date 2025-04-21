@@ -78,17 +78,6 @@ export class CategoriesFieldComponent implements OnInit {
         return parent ? parent.name_Field : 'Không xác định';
     }
 
-    // private findCategoryById(categories_field: Categogy_field[], id: number): Categogy_field | undefined {
-    //     for (const category of categories_field) {
-    //         if (category.id_Field === id) return category;
-    //         if (category.children && category.children.length > 0) {
-    //             const found = this.findCategoryById(category.children, id);
-    //             if (found) return found;
-    //         }
-    //     }
-    //     return undefined;
-    // }
-
     private findCategoryById(categories: Categogy_field[], id: number): Categogy_field | undefined {
         for (const category of categories) {
             if (category.id_Field === id) return category;
@@ -99,7 +88,6 @@ export class CategoriesFieldComponent implements OnInit {
         }
         return undefined;
     }
-
 
     get filteredCategories(): Categogy_field[] {
         if (!this.searchQuery) return this.categories_field;

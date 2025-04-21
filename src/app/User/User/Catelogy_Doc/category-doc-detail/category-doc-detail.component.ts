@@ -44,6 +44,17 @@ export class CategoryDocDetailComponent implements OnInit {
 
   ) {}
 
+  pdfLoaded: boolean = false;
+  detailLoading: boolean = false;
+  safeDetailPdfUrl: SafeResourceUrl | null = null;
+  currentDomainIndex: number = 0;
+
+  domains: string[] = [
+    'https://api.ttdt2503.id.vn',
+    'https://api.ttdt03.id.vn',
+    'https://api.congtt123.id.vn'
+  ];
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.nameDocs = decodeURIComponent(params.get('nameDocs') || '');
@@ -84,7 +95,8 @@ export class CategoryDocDetailComponent implements OnInit {
 
           // Kiểm tra nếu file_path không null
           if (this.docDetail.file_path) {
-                this.getDocumentFile(id);
+              // this.getDocumentFile(id);
+              this.tryLoadDetailPdf(); 
           } else {
               console.warn('Không có file_path hoặc docDetail là null.');
           }
@@ -177,7 +189,7 @@ export class CategoryDocDetailComponent implements OnInit {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = this.docDetail.file_path;
-        this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url); ;
+        this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
       },
       (error) => {
         console.error('Lỗi khi tải tài liệu:', error);
@@ -230,4 +242,52 @@ export class CategoryDocDetailComponent implements OnInit {
       }
     });
   }
+
+    // Hàm kiểm tra và bắt đầu load PDF
+  tryLoadDetailPdf(): void {
+    const filePath = this.docDetail?.file_path?.replace(/\\/g, "/");
+    if (!filePath) {
+      this.safeDetailPdfUrl = null;
+      this.detailLoading = false;
+      return;
+    }
+
+    this.detailLoading = true;
+    const domain = this.domains[this.currentDomainIndex];
+    const url = `${domain}/api/pdf/${filePath}`;
+    console.log(`🔍 Thử load PDF từ: ${url}`);
+
+    this.http.head(url, { observe: 'response' }).subscribe({
+      next: (res) => {
+        if (res.status === 200) {
+          this.safeDetailPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+          // Chờ iframe load thành công mới set pdfLoaded = true
+          console.log(`✅ Tải được PDF từ: ${domain}`);
+        } else {
+          this.loadNextDomainForDetailPdf();
+        }
+      },
+      error: () => {
+        this.loadNextDomainForDetailPdf();
+      }
+    });
+  }
+
+  loadNextDomainForDetailPdf(): void {
+    this.currentDomainIndex++;
+    if (this.currentDomainIndex < this.domains.length) {
+      this.tryLoadDetailPdf();
+    } else {
+      this.safeDetailPdfUrl = null;
+      this.detailLoading = false;
+      console.warn("❌ Không thể tải PDF từ bất kỳ domain nào.");
+    }
+  }
+
+  // Khi iframe load xong
+  handleDetailPdfLoad(): void {
+    this.pdfLoaded = true;
+    this.detailLoading = false;
+  }
+
 }
