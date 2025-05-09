@@ -122,6 +122,14 @@ export class UserLayoutComponent implements OnInit {
       event.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
       category.isOpen = !category.isOpen;
   }
+
+  toggleMenu() {
+    const checkbox = document.getElementById('check') as HTMLInputElement;
+    if (checkbox) {
+        checkbox.checked = false; // Đặt checkbox về false
+    }
+  }
+
   
   formatName(name: string | null | undefined): string {
     if (!name) return "unknown-document";

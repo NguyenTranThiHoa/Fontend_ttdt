@@ -8,17 +8,22 @@
         <!-- Bộ lọc lĩnh vực -->
         <div class="col-md-4">
             <label for="category"><b>Ngành - Lĩnh vực:</b></label>
-            <select class="form-control" id="category" [(ngModel)]="selectedCategoryId" (change)="onCategorySelect()" class="form-select"
-                style="border: 1px solid #9c9c9c;">
-                <option value=>Tất cả</option>
+            <select class="form-control" id="category" [(ngModel)]="selectedCategoryId" (change)="onCategorySelect()"
+                class="form-select" style="border: 1px solid #9c9c9c;">
+                <!-- <option value=>Tất cả</option> -->
+                <option [ngValue]="null">Tất cả</option>
                 <ng-container *ngIf="categories && categories.length > 0">
                     <ng-container *ngFor="let category of categories">
-                        <option style="font-weight: bold;" disabled [value]="category.id_Field">{{ category.name_Field }}
+                        <option style="font-weight: bold;" disabled [value]="category.id_Field">{{ category.name_Field
+                            }}
                         </option>
                         <ng-container *ngFor="let subCategory of category.children">
-                            <option [value]="subCategory.id_Field">- {{ subCategory.name_Field }}</option>
+                            <option [ngValue]="subCategory.id_Field">- {{ subCategory.name_Field }}</option>
+                            <!-- <option [value]="subCategory.id_Field">- {{ subCategory.name_Field }}</option> -->
                             <ng-container *ngFor="let child of subCategory.children">
-                                <option [value]="child.id_Field">-- {{ child.name_Field }}</option>
+                                <option [ngValue]="child.id_Field">-- {{ child.name_Field }}</option>
+
+                                <!-- <option [value]="child.id_Field">-- {{ child.name_Field }}</option> -->
                             </ng-container>
                         </ng-container>
                     </ng-container>

@@ -41,7 +41,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <a class="dropdown-item gth" *ngFor="let categoryIntro of categoriesIntroduce"
-                                [routerLink]="['/introduce',formatName(categoryIntro.name_cate_introduce)]">
+                                [routerLink]="['/introduce',formatName(categoryIntro.name_cate_introduce)]"
+                                (click)="toggleMenu()">
                                 {{ categoryIntro.name_cate_introduce }}
                             </a>
                         </ul>
@@ -64,8 +65,9 @@
                     <!-- Định nghĩa template đệ quy để hiển thị danh mục và các cấp con -->
                     <ng-template #categoryMenu let-category="category">
                         <li class="dropdown-item dropdown">
-                            <a class="dropdown-item level1"
-                                [routerLink]="['/news_events', formatName(category.name_category)]">
+                            <a class="dropdown-item level1 " style="padding: 10px;"
+                                [routerLink]="['/news_events', formatName(category.name_category)]"
+                                (click)="toggleMenu()">
                                 {{ displayCategory(category) }}
                                 <i *ngIf="category.children?.length" class="bi bi-chevron-down dropdown-icon"
                                     (click)="toggleDropdown(category, $event); $event.stopPropagation();">
@@ -97,8 +99,9 @@
                     <!-- Định nghĩa template đệ quy để hiển thị danh mục và các cấp con -->
                     <ng-template #categoryDocMenu let-category="category">
                         <li class="dropdown-item dropdown">
-                            <a class="dropdown-item level1"
-                                [routerLink]="['/document', formatName(category.name_category_document)]">
+                            <a class="dropdown-item level1" style="padding: 10px;"
+                                [routerLink]="['/document', formatName(category.name_category_document)]"
+                                (click)="toggleMenu()">
                                 {{ displayCategoryDoc(category) }}
                                 <i *ngIf="category.children?.length" class="bi bi-chevron-down dropdown-icon"
                                     (click)="toggleDropdown(category, $event); $event.stopPropagation();">
