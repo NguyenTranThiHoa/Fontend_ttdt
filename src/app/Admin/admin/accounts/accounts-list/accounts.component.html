@@ -49,8 +49,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let account of filteredAccounts | paginate: { itemsPerPage: pageSize, currentPage: page }">
-                <td>{{ account.id_account }}</td>
+            <tr *ngFor="let account of filteredAccounts | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                <!-- <td>{{ account.id_account }}</td> -->
+                <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                 <td>{{ account.username }}</td>
                 <td>{{ account.email }}</td>
                 <td>{{ account.fullname }}</td>
@@ -233,48 +234,64 @@
 <!-- Modal thêm tài khoản -->
 <div class="modal fade" id="accountsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="accounsModalLabel"
         aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 1000px;">
+    <div class="modal-dialog modal-lg" style="max-width: 700px;">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: cornflowerblue;">
-                <h5 class="modal-title" id="accounsModalLabel" style="font-weight: bold">THÊM NGƯỜI DÙNG</h5>
+            <div class="modal-header" style="background-color: white;">
+                <h5 class="modal-title" id="accounsModalLabel" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                    THÊM NGƯỜI DÙNG</h5>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="saveAccounts()">
-                    <h6>Thông Tin Chung</h6>
                     <div class="mb-3">
-                        <label class="form-label">Tên đăng nhập</label>
+                        <label for="username" class="form-label" style="font-weight: bold;">
+                            Tên đăng nhập:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="registerModel.username"
                             name="username" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" [(ngModel)]="registerModel.password" name="password"
-                            required />
+                        <label for="password" class="form-label" style="font-weight: bold;">
+                            Mật khẩu:<span style="color: red;">(*)</span>
+                        </label>
+                        <!-- <input type="password" class="form-control" [(ngModel)]="registerModel.password" name="password"
+                            required /> -->
+
+                        <input type="{{passwordVisible ? 'text' : 'password'}}" id="password" class="form-control"
+                            [(ngModel)]="registerModel.password" name="password" required placeholder="Mật khẩu">
+                        <span class="input-group-text" (click)="togglePasswordVisibility()">
+                            <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+                        </span>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label for="email" class="form-label" style="font-weight: bold;">
+                            Email:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="email" class="form-control" [(ngModel)]="registerModel.email"
                             name="email" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Họ và tên</label>
+                        <label for="fullname" class="form-label" style="font-weight: bold;">
+                            Họ và tên:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="registerModel.fullname"
                             name="fullname" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Vai trò</label>
-                        <select class="form-control" [(ngModel)]="registerModel.role" name="role" required>
+                        <label for="role" class="form-label" style="font-weight: bold;">
+                            Vai trò:<span style="color: red;">(*)</span>
+                        </label>
+                        <select class="form-select" [(ngModel)]="registerModel.role" name="role" required>
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
                         </select>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Lưu lại</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save2" style="margin: 0px 10px;"></i>Lưu lại</button>
                         <button type="button" class="btn btn-secondary" (click)="closeModal()">Đóng</button>
                     </div>
                 </form>
@@ -287,34 +304,42 @@
 <!-- Modal sửa tài khoản -->
 <div class="modal fade" id="updateAccountsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="accounsModalLabel1"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 1000px;">
+    <div class="modal-dialog modal-lg" style="max-width: 700px;">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: cornflowerblue;">
-                <h5 class="modal-title" id="accounsModalLabel1" style="font-weight: bold">SỬA NGƯỜI DÙNG</h5>
+            <div class="modal-header" style="background-color: white;">
+                <h5 class="modal-title" id="accounsModalLabel1" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                    SỬA NGƯỜI DÙNG</h5>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="saveAccounts_Update()">
-                    <h6>Thông Tin Chung</h6>
                     <div class="mb-3">
-                        <label class="form-label">Tên đăng nhập</label>
+                        <label for="username" class="form-label" style="font-weight: bold;">
+                            Tên đăng nhập:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username"
                             required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label for="email" class="form-label" style="font-weight: bold;">
+                            Email:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email"
                             required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Họ và tên</label>
+                        <label for="fullname" class="form-label" style="font-weight: bold;">
+                            Họ và tên:<span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname"
                             required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Vai trò</label>
+                        <label for="role" class="form-label" style="font-weight: bold;">
+                            Vai trò:<span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-control" [(ngModel)]="accountsForm.role" name="role" required>
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
@@ -322,7 +347,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Lưu lại</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save2" style="margin: 0px 10px;"></i>Lưu lại</button>
                         <button type="button" class="btn btn-secondary" (click)="closeModal_update()">Đóng</button>
                     </div>
                 </form>

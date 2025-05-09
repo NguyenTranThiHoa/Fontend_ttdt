@@ -73,8 +73,11 @@
 
                 <form (ngSubmit)="saveCategories()">
                     <div class="mb-3">
-                        <label for="name_category" class="form-label" style="font-weight: bold;">Tên danh mục Tin tức - Sự
-                            kiện</label>
+                        <!-- <label for="name_category" class="form-label" style="font-weight: bold;">Tên danh mục Tin tức - Sự
+                            kiện</label> -->
+                        <label for="name_category" class="form-label" style="font-weight: bold;">
+                            Tên danh mục Tin tức - Sự kiện <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="categoryForm.name_category" name="name_category"
                             required (blur)="categoryForm.name_category = categoryForm.name_category.trim()"
                             placeholder="Nhập tên danh mục...." />
@@ -152,14 +155,15 @@
             <ng-container *ngFor="let category of filteredCategories | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                 <tr>
                     <td><input type="checkbox" [(ngModel)]="category.selected" [name]="'checkbox-' + i"></td>
-                    <td>{{ category.id_categories }}</td>
+                    <!-- <td>{{ category.id_categories }}</td> -->
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td [ngClass]="{'root-category': category.parentId === null}">
                         {{ getCategoryFullName(category, 0) }}
                     </td>
                     <td>{{ getParentName(category.parentId) }}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(category)"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm me-2" (click)="DeleteCategories(category.id_categories)"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm me-2" style="border: 1px solid; color: blue;" (click)="openEditModal(category)"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm me-2" style="border: 1px solid; color: red;" (click)="DeleteCategories(category.id_categories)"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
                 <ng-container *ngIf="category.children && category.children.length > 0">
@@ -175,13 +179,14 @@
         <tr>
             <td><input type="checkbox" [(ngModel)]="child.selected" [name]="'checkbox-child-' + level + '-' + j"></td>
             <td>{{ child.id_categories }}</td>
+            <!-- <td>{{ (page - 1) * pageSize + j + 1 }}</td> -->
             <td [ngClass]="{'root-category': child.parentId === null}">
                 {{ getCategoryFullName(child, level) }}
             </td>
             <td>{{ getParentName(child.parentId) }}</td>
             <td>
-                <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(child)"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-danger btn-sm me-2" (click)="DeleteCategories(child.id_categories)"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm me-2" style="border: 1px solid; color: blue;" (click)="openEditModal(child)"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm me-2" style="border: 1px solid; color: red;" (click)="DeleteCategories(child.id_categories)"><i class="bi bi-trash"></i></button>
             </td>
         </tr>
         <ng-container *ngIf="child.children && child.children.length > 0">
@@ -204,8 +209,3 @@
         </li>
     </ul>
 </nav>
-
-
-
-
-

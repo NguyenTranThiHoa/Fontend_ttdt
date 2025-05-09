@@ -55,7 +55,7 @@ export class ForgotpasswordComponent {
         },
         error: (err) => {
             console.error('Lỗi khi gửi mã xác nhận:', err);
-            alert('Không thể gửi mã xác nhận, kiểm tra email.');
+            alert('Không thể gửi mã xác nhận, kiểm tra lại email.');
         }
     });
   }
@@ -126,6 +126,56 @@ export class ForgotpasswordComponent {
     if (event.target.value.length === 1 && index < this.verificationCode.length) {
       const nextInput = document.querySelectorAll('input')[index] as HTMLInputElement;
       if (nextInput) nextInput.focus();
+    }
+  }
+
+  // Ẩn và mở con mắt mật khẩu
+  showOldPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
+  togglePasswordVisibility(type: string): void {
+    if (type === 'old') {
+      this.showOldPassword = !this.showOldPassword;
+    } else if (type === 'new') {
+      this.showNewPassword = !this.showNewPassword;
+    } else if (type === 'confirm') {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
+  }
+
+
+  // Khi nhập số, tự nhảy qua ô kế tiếp nếu là số
+  onInput(event: any, index: number): void {
+    const value = event.target.value;
+    // Chỉ cho nhập số, nếu không phải số thì xóa
+    if (!/^[0-9]$/.test(value)) {
+      event.target.value = '';
+      this.verificationCode[index] = '';
+      return;
+    }
+
+    this.verificationCode[index] = value;
+
+    // Tự nhảy qua ô tiếp theo nếu chưa phải ô cuối
+    const inputs = document.querySelectorAll('.modal-body input');
+    if (index < inputs.length - 1) {
+      (inputs[index + 1] as HTMLInputElement).focus();
+    }
+  }
+
+  // Khi nhấn phím Backspace thì quay lại ô trước
+  onKeyDown(event: KeyboardEvent, index: number): void {
+    const inputs = document.querySelectorAll('.modal-body input');
+
+    if (event.key === 'Backspace') {
+      if (this.verificationCode[index] === '') {
+        if (index > 0) {
+          (inputs[index - 1] as HTMLInputElement).focus();
+        }
+      } else {
+        this.verificationCode[index] = '';
+      }
     }
   }
 }

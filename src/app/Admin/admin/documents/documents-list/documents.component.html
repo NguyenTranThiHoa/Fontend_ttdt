@@ -122,15 +122,21 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="title" class="form-label" style="font-weight: bold;">Tên Văn bản - Pháp
-                                    luât:</label>
+                                <!-- <label for="title" class="form-label" style="font-weight: bold;">Tên Văn bản - Pháp
+                                    luât:</label> -->
+                                <label for="title" class="form-label" style="font-weight: bold;">
+                                    Tên Văn bản - Pháp luật: <span style="color: red;">(*)</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="documentsForm.title" name="title"
                                     required />
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="description" class="form-label" style="font-weight: bold;">Mô tả ngắn:
+                                <!-- <label for="description" class="form-label" style="font-weight: bold;">Mô tả ngắn:
+                                </label> -->
+                                <label for="description" class="form-label" style="font-weight: bold;">
+                                    Mô tả ngắn: <span style="color: red;">(*)</span>
                                 </label>
                                 <textarea class="form-control" [(ngModel)]="documentsForm.description_short"
                                     name="description_short" rows="3" required></textarea>
@@ -138,7 +144,10 @@
                         </div>
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="content" class="form-label" style="font-weight: bold;">Nội dung chính:
+                                <!-- <label for="content" class="form-label" style="font-weight: bold;">Nội dung chính:
+                                </label> -->
+                                <label for="content" class="form-label" style="font-weight: bold;">
+                                    Nội dung chính: <span style="color: red;">(*)</span>
                                 </label>
                                 <textarea class="form-control" [(ngModel)]="documentsForm.description"
                                     name="description" rows="4" required></textarea>
@@ -147,8 +156,11 @@
 
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="documentParentId" class="form-label" style="font-weight: bold;">Chọn danh
-                                    mục: </label>
+                                <!-- <label for="documentParentId" class="form-label" style="font-weight: bold;">Chọn danh
+                                    mục: </label> -->
+                                <label for="documentParentId" class="form-label" style="font-weight: bold;">
+                                    Chọn danh mục: <span style="color: red;">(*)</span>
+                                </label>
                                 <select class="form-select" [(ngModel)]="documentsForm.id_category_document"
                                     name="documentParentId">
                                     <option [value]="null">Không có cha (Cấp cao nhất)</option>
@@ -166,7 +178,10 @@
 
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="account" style="font-weight: bold;">Tài khoản của bạn</label>
+                                <!-- <label for="account" style="font-weight: bold;">Tài khoản của bạn</label> -->
+                                <label for="account" style="font-weight: bold;">
+                                    Tài khoản của bạn <span style="color: red;">(*)</span>
+                                </label>
                                 <select [(ngModel)]="documentsForm.id_account" name="id_account"
                                     class="form-select d-inline-block">
                                     <option [value]="id_account">{{ username }}</option>
@@ -176,8 +191,11 @@
 
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="file_path" class="form-label" style="font-weight: bold;">Chọn file
-                                    PDF</label>
+                                <!-- <label for="file_path" class="form-label" style="font-weight: bold;">Chọn file
+                                    PDF</label> -->
+                                <label for="file_path" class="form-label" style="font-weight: bold;">
+                                    Chọn file PDF <span style="color: red;">(*)</span>
+                                </label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" [(ngModel)]="selectedPdfName"
                                         name="selectedPdfName" readonly placeholder="Chưa chọn file PDF">
@@ -270,17 +288,17 @@
                 <td>{{ getAccounts_Name(documentss.id_account) }}</td>
                 <td>{{ documentss.file_path}}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(documentss)"><i
+                    <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(documentss)"><i
                             class="bi bi-pencil"></i></button>
-                    <button class="btn btn-danger btn-sm me-2" (click)="DeleteDocuments(documentss.id_document)"><i
+                    <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteDocuments(documentss.id_document)"><i
                             class="bi bi-trash"></i></button>
                 </td>
                 <td>
-                    <button class="btn btn-info btn-sm me-2" (click)="viewDetails(documentss)"><i
-                            class="bi bi-eye"></i></button>
+                    <button class="btn btn-sm me-2" (click)="viewDetails(documentss)" style="color: #205c62; border: 1px solid;">
+                        <i class="bi bi-eye"></i></button>
 
                     <button class="btn btn-sm" [ngClass]="documentss.isVisible ? 'btn-success' : 'btn-danger'"
-                        (click)="toggleVisibility(documentss)">
+                        (click)="toggleVisibility(documentss)" >
                         {{ documentss.isVisible ? 'Hiện' : 'Ẩn' }}
                     </button>
                 </td>

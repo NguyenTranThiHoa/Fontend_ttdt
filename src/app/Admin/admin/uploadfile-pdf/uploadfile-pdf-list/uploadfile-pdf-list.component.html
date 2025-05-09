@@ -150,21 +150,24 @@
                                 <td>{{ pdf.uploadedAt | date: 'dd-MM-yyyy'}}</td>
                                 <td>
                                     <!-- Nút Xóa -->
-                                    <button class="btn btn-danger btn-sm me-2"
+                                    <button class="btn btn-sm me-2" style="color: red; border: 1px solid;"
                                         (click)="openDeletePdfModal(pdf.id_pdf)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                     <!-- Nút Sửa -->
-                                    <button class="btn btn-primary btn-sm me-2" (click)="openEditPdfModal(pdf)">
+                                    <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" 
+                                        (click)="openEditPdfModal(pdf)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-info btn-sm me-2" (click)="openMovePdfModal(pdf.id_pdf)">
+                                    <button class="btn btn-sm me-2" style="color: rgb(53, 242, 249); border: 1px solid;"
+                                        (click)="openMovePdfModal(pdf.id_pdf)">
                                         <i class="bi bi-arrows-move"></i>
                                     </button>
                                     <!-- Nút Xem -->
-                                    <button class="btn btn-secondary btn-sm" (click)="openViewPdfModal(pdf)">
+                                    <button class="btn btn-sm" style="color: yellow; border: 1px solid;" 
+                                        (click)="openViewPdfModal(pdf)">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </td>
@@ -223,7 +226,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"
-                    style="justify-content: center; font-weight: bold; font-family: 'Times New Roman', Times, serif; padding: 0px 100px; margin-left: 100px;"
+                    style="justify-content: center; font-weight: bold; font-family: 'Times New Roman', Times, serif; padding: 0px 100px; margin-left: 120px;"
                     id="folderModalLabel">
                     {{ isEditMode ? 'SỬA' : 'THÊM' }} THƯ MỤC PDF
                 </h4>
@@ -237,13 +240,19 @@
 
                 <form (ngSubmit)="saveFolderPdf()">
                     <div class="mb-3">
-                        <label for="name_folder" class="form-label" style="font-weight: bold;">Tên thư mục</label>
+                        <!-- <label for="name_folder" class="form-label" style="font-weight: bold;">Tên thư mục</label> -->
+                        <label for="name_folder" class="form-label" style="font-weight: bold;">
+                            Tên thư mục <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="folderPdfForm.name_folder" name="name_folder" required
                             placeholder="Nhập tên thư mục...." />
                     </div>
                 
                     <div class="mb-3">
-                        <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label>
+                        <!-- <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label> -->
+                        <label for="parentId" class="form-label" style="font-weight: bold;">
+                            Chọn thư mục cha <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-select" [(ngModel)]="folderPdfForm.parentId" name="parentId">
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folderPdf">
@@ -303,17 +312,19 @@
 
 <!-- Modal Di Chuyển Ảnh -->
 <div class="modal fade" id="movePdfModal" tabindex="-1" aria-labelledby="moveImageModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 40%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="moveImageModalLabel">DI CHUYỂN ẢNH</h5>
+                <h5 class="modal-title" id="moveImageModalLabel" style="margin-left: 170px; font-family: 'Times New Roman', Times, serif; font-weight: bold;">DI CHUYỂN FILE PDF</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('movePdfModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="movePdf(selectedImageId, selectedTargetFolderId)">
                     <div class="mb-3">
-                        <label for="targetFolderId" class="form-label" style="font-weight: bold;">Chọn thư mục đích</label>
+                        <label for="targetFolderId" class="form-label" style="font-weight: bold;">
+                            Chọn thư mục đích: <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-select" [(ngModel)]="selectedTargetFolderId" name="targetFolderId"
                             required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
@@ -326,7 +337,7 @@
                             </ng-container>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 150px; padding: 5px 30px;">
+                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 210px; padding: 5px 30px;">
                         <i class="bi bi-arrows-move" style="padding: 0px 10px;"></i>Di Chuyển</button>
                 </form>
             </div>
@@ -334,7 +345,7 @@
     </div>
 </div>
 
-<!-- Modal Xác nhận xóa hình ảnh -->
+<!-- Modal Xác nhận xóa file pdf -->
 <div class="modal fade" id="deletePdfModal" tabindex="-1" aria-labelledby="deleteImageModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -344,7 +355,7 @@
                     (click)="hideModal(getModalInstance('deletePdfModal'))"></button>
             </div>
             <div class="modal-body">
-                Bạn có chắc chắn muốn xóa hình ảnh này không?
+                Bạn có chắc chắn muốn xóa file PDF này không?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"
@@ -361,21 +372,26 @@
     <div class="modal-dialog" style="max-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editImageModalLabel" style="margin-left: 400px;">SỬA FILE PDF</h5>
+                <h5 class="modal-title" id="editImageModalLabel" style="margin-left: 380px; font-weight: bold; font-family: 'Times New Roman', Times, serif;">
+                    SỬA FILE PDF</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('editPdfModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="updatePdf(selectedImageId, pdfForm)">
                     <div class="mb-3">
-                        <label for="fileName" class="form-label fw-bold">Tên file Pdf</label>
+                        <label for="fileName" class="form-label" style="font-weight: bold;">
+                            Tên file PDF: <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="pdfForm.fileName" name="fileName"
                             required>
                     </div>
 
                     <!-- Chọn PDF -->
                     <div class="mb-3">
-                        <label for="pdfFile" class="form-label fw-bold">Chọn file PDF</label>
+                        <label for="pdfFile" class="form-label" style="font-weight: bold;">
+                            Chọn file PDF: <span style="color: red;">(*)</span>
+                        </label>
                         <input type="file" class="form-control" id="pdfFile" (change)="onPdfSelected($event)" accept="application/pdf"
                             name="pdfFile" required />
 
@@ -386,7 +402,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="folder" class="form-label" style="font-weight: bold;">Chọn Thư Mục</label>
+                        <label for="folder" class="form-label" style="font-weight: bold;">
+                            Chọn Thư mục: <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-select" [(ngModel)]="pdfForm.id_folder_pdf" name="folder" required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folderPdf">
@@ -398,9 +416,10 @@
                             </ng-container>
                         </select>
                     </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary me-2" style="padding: 5px 30px;">
+
+                    <button type="submit" class="btn btn-primary me-2" style="padding: 5px 30px; margin-left: 370px; margin-bottom: 10px;" >
                         <i class="bi bi-save2" style="padding: 0px 10px;"></i>Lưu</button>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" style="padding: 5px 30px;" data-bs-dismiss="modal">Hủy</button>
                 </div>
                 </form>
@@ -413,8 +432,8 @@
 <div class="modal fade" id="viewPdfModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="viewPdfLabel">
     <div class="modal-dialog modal-lg" style="max-width: 60%;">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">XEM FILE PDF</h5>
+            <div class="modal-header" style="background-color: #c2cdd7;">
+                <h5 class="modal-title" style="font-family: 'Times New Roman', Times, serif; margin-left: 400px; font-weight: bold;">XEM FILE PDF</h5>
                 <button type="button" class="btn-close" (click)="hideModal(getModalInstance('viewPdfModal'))"></button>
             </div>
             <div class="modal-body">

@@ -23,6 +23,8 @@
     "@ckeditor/ckeditor5-table": "^44.3.0",
     "@kolkov/angular-editor": "^3.0.0-beta.2",
     "@ng-bootstrap/ng-bootstrap": "^17.0.1",
+    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/http-loader": "^16.0.1",
     "@syncfusion/ej2-angular-richtexteditor": "^28.2.7",
     "@tinymce/tinymce-angular": "^8.0.1",
     "angular-font-awesome": "^3.1.2",

@@ -116,9 +116,12 @@
                     </div>
                     <form (ngSubmit)="saveCategories_introduce()">
                         <div class="mb-3">
-                            <label for="name_cate_introduce" class="form-label"
+                            <!-- <label for="name_cate_introduce" class="form-label"
                                 style="font-weight: bold;">Tên danh mục thông
-                                tin chung</label>
+                                tin chung</label> -->
+                            <label for="name_cate_introduce" class="form-label" style="font-weight: bold;">
+                                Tên danh mục thông tin chung <span style="color: red;">(*)</span>
+                            </label>
                             <input type="text" class="form-control"
                                 [(ngModel)]="category_introduceForm.name_cate_introduce"
                                 name="name_cate_introduce"
@@ -196,10 +199,10 @@
                     <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td>{{ categoriess.name_cate_introduce }}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm me-2"
+                        <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;"
                             (click)="openEditModal(categoriess)"><i
                                 class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm me-2"
+                        <button class="btn btn-sm me-2" style="color: red; border: 1px solid;"
                             (click)="DeleteCategories_introduce(categoriess.id_cate_introduce)"><i
                                 class="bi bi-trash"></i></button>
                     </td>
@@ -335,10 +338,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-3" style="padding: 0px 10px;">
-                                    <label for="name_category"
+                                    <!-- <label for="name_category"
                                         class="form-label"
                                         style="font-weight: bold;">Tên thông
-                                        tin</label>
+                                        tin</label> -->
+                                    <label for="name_category" class="form-label" style="font-weight: bold;">
+                                        Tên thông tin <span style="color: red;">(*)</span>
+                                    </label>
                                     <input type="text" class="form-control"
                                         [(ngModel)]="introduceForm.name_introduce"
                                         name="name_category" required />
@@ -348,9 +354,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-3" style="padding: 0px 10px;">
-                                    <label for="description" class="form-label"
+                                    <!-- <label for="description" class="form-label"
                                         style="font-weight: bold;">Nội dung
-                                        Chính</label>
+                                        Chính</label> -->
+                                    <label for="description" class="form-label" style="font-weight: bold;">
+                                        Nội dung Chính <span style="color: red;">(*)</span>
+                                    </label>
                                     <div class="quill-editor-container"
                                         style="max-height: 400px; overflow-y: auto; border-radius: 0.25rem;">
                                         <quill-editor
@@ -366,9 +375,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-3" style="padding: 0px 10px;">
-                                    <label for="category"
+                                    <!-- <label for="category"
                                         style="font-weight: bold;">Chọn danh
-                                        mục:</label>
+                                        mục:</label> -->
+                                    <label for="category" style="font-weight: bold;">
+                                        Chọn danh mục: <span style="color: red;">(*)</span>
+                                    </label>
                                     <select
                                         [(ngModel)]="introduceForm.id_cate_introduce"
                                         name="id_cate_introduce"
@@ -384,8 +396,11 @@
                             </div>
                         </div>
                         <div class="mb-3" style="padding: 0px 10px;">
-                            <label for="image" class="form-label"
-                                style="font-weight: bold;">Chọn hình ảnh</label>
+                            <!-- <label for="image" class="form-label"
+                                style="font-weight: bold;">Chọn hình ảnh</label> -->
+                            <label for="image" class="form-label" style="font-weight: bold;">
+                                Chọn hình ảnh <span style="color: red;">(*)</span>
+                            </label>
                             <div class="input-group">
                                 <input type="text" class="form-control"
                                     [(ngModel)]="selectedImageName1" readonly
@@ -495,10 +510,10 @@
                     </td>
                     <td>{{ subCategory.create_at | date: 'dd-MM-yyyy' }}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm me-2"
+                        <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;"
                             (click)="openEdit_Modal(subCategory)"><i
                                 class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm me-2"
+                        <button class="btn btn-sm me-2" style="color: red; border: 1px solid;"
                             (click)="DeleteIntroduce(subCategory.id_introduce)"><i
                                 class="bi bi-trash"></i></button>
                     </td>

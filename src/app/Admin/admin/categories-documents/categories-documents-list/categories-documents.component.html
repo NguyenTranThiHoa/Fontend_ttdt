@@ -79,7 +79,10 @@
                 </div>
                 <form (ngSubmit)="saveCategories_documents()">
                     <div class="mb-3">
-                        <label for="name_category_document" class="form-label" style="font-weight: bold;">Tên danh mục Văn bản - Pháp luật</label>
+                        <!-- <label for="name_category_document" class="form-label" style="font-weight: bold;">Tên danh mục Văn bản - Pháp luật</label> -->
+                        <label for="name_category_document" class="form-label" style="font-weight: bold;">
+                            Tên danh mục Văn bản - Pháp luật <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="category_documentsForm.name_category_document" name="name_category_document" required
                             (blur)="category_documentsForm.name_category_document = category_documentsForm.name_category_document.trim()" placeholder="Nhập tên danh mục...." />
                     </div>
@@ -162,14 +165,15 @@
             <ng-container *ngFor="let category of filteredCategory_documents | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                 <tr>
                     <td><input type="checkbox" [(ngModel)]="category.selected" [name]="'checkbox-' + i"></td>
-                    <td>{{ category.id_category_document }}</td>
+                    <!-- <td>{{ category.id_category_document }}</td> -->
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td [ngClass]="{'root-category': category.documentParentId === null}">
                         {{ getCategoryFullName(category, 0) }}
                     </td>
                     <td>{{ getParentName(category.documentParentId) }}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(category)"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm me-2" (click)="DeleteCCategory_Documents(category.id_category_document)"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(category)"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteCCategory_Documents(category.id_category_document)"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
                 <ng-container *ngIf="category.children && category.children.length > 0">
@@ -190,9 +194,9 @@
             </td>
             <td>{{ getParentName(child.documentParentId) }}</td>
             <td>
-                <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(child)"><i
+                <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(child)"><i
                         class="bi bi-pencil"></i></button>
-                <button class="btn btn-danger btn-sm me-2" (click)="DeleteCCategory_Documents(child.id_category_document)"><i
+                <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteCCategory_Documents(child.id_category_document)"><i
                         class="bi bi-trash"></i></button>
             </td>
         </tr>

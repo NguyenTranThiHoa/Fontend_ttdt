@@ -501,4 +501,15 @@ export class AccountsListComponent implements OnInit {
     });
   }
 
+
+  // Biến để điều khiển việc hiển thị mật khẩu
+  passwordVisible: boolean = false;
+
+  // Hàm chuyển đổi giữa hiển thị và ẩn mật khẩu
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
+  
+
 }

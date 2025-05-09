@@ -99,7 +99,7 @@
 <!-- Modal thêm/sửa -->
 <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 1200px;">
+    <div class="modal-dialog modal-lg" style="max-width: 1250px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"
@@ -121,7 +121,8 @@
                         <!-- Tiêu đề Tin tức -->
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="title" style="font-weight: bold;">Tiêu đề Tin tức</label>
+                                <!-- <label for="title" style="font-weight: bold;">Tiêu đề Tin tức</label> -->
+                                <label for="title" style="font-weight: bold;">Tiêu đề Tin tức <span style="color: red;">(*)</span></label>
                                 <input type="text" class="form-control" [(ngModel)]="news_eventsForm.title" name="title"
                                     required />
                             </div>
@@ -129,7 +130,8 @@
 
                         <div class="col-md-6">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="account" style="font-weight: bold;">Tài khoản của bạn</label>
+                                <!-- <label for="account" style="font-weight: bold;">Tài khoản của bạn</label> -->
+                                <label for="account" style="font-weight: bold;">Tài khoản của bạn <span style="color: red;">(*)</span></label>
                                 <select [(ngModel)]="news_eventsForm.id_account" name="id_account" class="form-select">
                                     <option [value]="id_account">{{ username }}</option>
                                 </select>
@@ -139,8 +141,10 @@
                         <!-- Danh mục -->
                         <div class="col-md-6">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="parentId" class="form-label" style="font-weight: bold;">Chọn danh
-                                    mục</label>
+                                <!-- <label for="parentId" class="form-label" style="font-weight: bold;">Chọn danh
+                                    mục</label> -->
+                                <label for="parentId" class="form-label" style="font-weight: bold;">Chọn danh mục <span
+                                        style="color: red;">(*)</span></label>
                                 <select class="form-select" [(ngModel)]="news_eventsForm.id_categories" name="parentId">
                                     <option [value]="null">Không có cha (Cấp cao nhất)</option>
                                     <ng-container *ngFor="let category of categories">
@@ -159,8 +163,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="content" class="form-label" style="font-weight: bold;">Nội dung
-                                    Chính</label>
+                                <!-- <label for="content" class="form-label" style="font-weight: bold;">Nội dung
+                                    Chính</label> -->
+                                <label for="content" class="form-label" style="font-weight: bold;">Nội dung Chính <span
+                                        style="color: red;">(*)</span></label>
                                 <div class="quill-editor-container"
                                     style="max-height: 400px; overflow-y: auto; border-radius: 0.25rem;">
                                     <quill-editor [(ngModel)]="news_eventsForm.content" [modules]="quillConfig"
@@ -175,8 +181,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="description_short" class="form-label" style="font-weight: bold;">Nội dung
-                                    tiêu đề ngắn</label>
+                                <!-- <label for="description_short" class="form-label" style="font-weight: bold;">Nội dung
+                                    tiêu đề ngắn</label> -->
+                                <label for="description_short" class="form-label" style="font-weight: bold;">Nội dung tiêu đề ngắn <span
+                                            style="color: red;">(*)</span></label>
                                 <textarea class="form-control" [(ngModel)]="news_eventsForm.description_short"
                                     name="description_short" rows="3" required></textarea>
                             </div>
@@ -187,7 +195,9 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="image" class="form-label" style="font-weight: bold;">Chọn hình ảnh</label>
+                                <!-- <label for="image" class="form-label" style="font-weight: bold;">Chọn hình ảnh</label> -->
+                                <label for="image" class="form-label" style="font-weight: bold;">Chọn hình ảnh <span
+                                        style="color: red;">(*)</span></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" [(ngModel)]="selectedImageName1" readonly
                                         placeholder="Chưa chọn ảnh">
@@ -294,12 +304,12 @@
                 </td>
                 <td>{{ news_event.view }}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(news_event)"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-danger btn-sm me-2" (click)="DeleteNews_Events(news_event.id_newsevent)"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(news_event)"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteNews_Events(news_event.id_newsevent)"><i class="bi bi-trash"></i></button>
                 </td>
                 <td>
                     <a [href]="'https://ttdt2503.id.vn/news-detail/' + [formatName(news_event.title)]" target="_blank"
-                        class="btn btn-info btn-sm me-2">
+                        class="btn btn-sm me-2" style="color: #205c62; border: 1px solid;">
                         <i class="bi bi-eye"></i>
                     </a>
                 </td>

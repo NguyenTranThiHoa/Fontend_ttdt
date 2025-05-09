@@ -126,7 +126,10 @@
                         <!-- Hàng đầu tiên: Tiêu đề Tin tức -->
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="name_procedures" style="font-weight: bold;">Tiêu đề Thủ tục hành chính</label>
+                                <!-- <label for="name_procedures" style="font-weight: bold;">Tiêu đề Thủ tục hành chính</label> -->
+                                <label for="name_procedures" style="font-weight: bold;">
+                                    Tiêu đề Thủ tục hành chính <span style="color: red;">(*)</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="procedureForm.name_procedures" name="name_procedures"
                                     required />
                             </div>
@@ -134,7 +137,10 @@
 
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="id_thutuc" style="font-weight: bold;">Mã thủ tục hành chính</label>
+                                <!-- <label for="id_thutuc" style="font-weight: bold;">Mã thủ tục hành chính</label> -->
+                                <label for="id_thutuc" style="font-weight: bold;">
+                                    Mã thủ tục hành chính <span style="color: red;">(*)</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="procedureForm.id_thutuc" name="id_thutuc"
                                     required />
                             </div>
@@ -142,7 +148,10 @@
 
                         <div class="col-md-6">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="account" style="font-weight: bold;">Tài khoản của bạn</label>
+                                <!-- <label for="account" style="font-weight: bold;">Tài khoản của bạn</label> -->
+                                <label for="account" style="font-weight: bold;">
+                                    Tài khoản của bạn <span style="color: red;">(*)</span>
+                                </label>
                                 <select [(ngModel)]="procedureForm.id_account" name="id_account" class="form-select">
                                     <option [value]="id_account">{{ username }}</option>
                                 </select>
@@ -151,8 +160,11 @@
 
                         <div class="col-md-6">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="fielParentId" class="form-label" style="font-weight: bold;">Chọn danh
-                                    mục</label>
+                                <!-- <label for="fielParentId" class="form-label" style="font-weight: bold;">Chọn danh
+                                    mục</label> -->
+                                <label for="fielParentId" class="form-label" style="font-weight: bold;">
+                                    Chọn danh mục <span style="color: red;">(*)</span>
+                                </label>
                                 <select class="form-select" [(ngModel)]="procedureForm.id_Field" name="fielParentId">
                                     <option [value]="null">Không có cha (Cấp cao nhất)</option>
                                     <ng-container *ngFor="let category of categories_field">
@@ -171,8 +183,11 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="description" class="form-label" style="font-weight: bold;">Nội dung
-                                    Chính</label>
+                                <!-- <label for="description" class="form-label" style="font-weight: bold;">Nội dung
+                                    Chính</label> -->
+                                <label for="description" class="form-label" style="font-weight: bold;">
+                                    Nội dung Chính <span style="color: red;">(*)</span>
+                                </label>
                                 <div class="quill-editor-container" style="max-height: 400px; overflow-y: auto; border-radius: 0.25rem;">
                                     <quill-editor [(ngModel)]="procedureForm.description" [modules]="quillConfig"
                                         (onEditorCreated)="onEditorCreated($event)" name="description" theme="snow">
@@ -185,7 +200,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3" style="padding: 0px 10px;">
-                                <label for="date_issue" class="form-label" style="font-weight: bold;">Ngày ban hành</label>
+                                <!-- <label for="date_issue" class="form-label" style="font-weight: bold;">Ngày ban hành</label> -->
+                                <label for="date_issue" class="form-label" style="font-weight: bold;">
+                                    Ngày ban hành <span style="color: red;">(*)</span>
+                                </label>
                                 <input type="datetime-local" class="form-control" [(ngModel)]="procedureForm.date_issue" name="date_issue"
                                     required />
                             </div>
@@ -277,14 +295,14 @@
                 <td>{{ getAccounts_Name(news_event.id_account) }}</td>
                 <td>{{ news_event.create_at | date: 'dd-MM-yyyy' }}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(news_event)"><i
+                    <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(news_event)"><i
                             class="bi bi-pencil"></i></button>
-                    <button class="btn btn-danger btn-sm me-2" (click)="DeleteProcedure(news_event.id_procedures)"><i
+                    <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteProcedure(news_event.id_procedures)"><i
                             class="bi bi-trash"></i></button>
                 </td>
                 <td>
                     <a [href]="'https://ttdt2503.id.vn/procedures/' + formatName(news_event.id_thutuc)" target="_blank"
-                        class="btn btn-info btn-sm me-2">
+                        class="btn btn-sm me-2" style="color: #205c62; border: 1px solid;">
                         <i class="bi bi-eye"></i>
                     </a>
                     <button class="btn btn-sm" [ngClass]="news_event.isVisible ? 'btn-success' : 'btn-danger'"

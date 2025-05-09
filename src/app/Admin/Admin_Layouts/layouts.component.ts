@@ -29,7 +29,7 @@ export class LayoutsComponent implements OnInit {
   constructor(private router: Router, private authService: AuthService,
     private settingsService: WebsiteSettingsService,
     private http: HttpClient,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

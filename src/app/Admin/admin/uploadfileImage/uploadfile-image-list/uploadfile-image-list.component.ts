@@ -65,6 +65,7 @@ export class UploadfileImageListComponent implements OnInit {
 
     searchQuery: string = '';
     imagePreview: string | null = null;
+    imagePreview1: string | null = null;
 
     constructor(
         private uploadService: UploadfileImageService,
@@ -377,12 +378,13 @@ export class UploadfileImageListComponent implements OnInit {
     //     this.imagePreview = image.filePath ? `https://ttdt2503.id.vn/api/images/${image.filePath}` : null;
     //     this.showModal('editImageModal');
     // }
+
     openEditImageModal(image: PostImage): void {
         this.selectedImageId = image.id_Image;
         this.imageForm = { ...image };
         
         // Preview fallback theo domain
-        this.imagePreview = this.getImageUrl(this.imageForm);
+        this.imagePreview1 = this.getImageUrl(this.imageForm);
 
         this.showModal('editImageModal');
     }

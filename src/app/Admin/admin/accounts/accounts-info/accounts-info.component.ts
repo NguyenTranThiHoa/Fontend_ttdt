@@ -45,7 +45,7 @@ export class AccountsInfoComponent {
   constructor(
     private accountsService: AccountsService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loggedInUsername = localStorage.getItem('username'); // Lấy username đang đăng nhập
@@ -89,7 +89,7 @@ export class AccountsInfoComponent {
   // Mở modal chỉnh sửa thông tin cá nhân
   openEditProfileModal(): void {
     this.isEditMode = true;
-    this.accountsForm = { ...this.accountsForm }; 
+    this.accountsForm = { ...this.accountsForm };
     const modalElement = document.getElementById('editProfileModal');
     if (modalElement) {
       const modalInstance = new bootstrap.Modal(modalElement);
@@ -101,18 +101,18 @@ export class AccountsInfoComponent {
     console.log('Dữ liệu gửi đi:', this.accountsForm);
 
     this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
-        next: (response) => {
-            console.log('Sửa tài khoản thành công:', response);
-            this.loadUserAccount(); // Load lại danh sách
-            this.showSuccessMessage("Sửa tài khoản thành công!");
-            setTimeout(() => {
-              this.closeModal_update();
-            }, 2000);
-        },
-        error: (err) => {
-            console.error('Lỗi khi sửa tài khoản:', err);
-            this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
-        }
+      next: (response) => {
+        console.log('Sửa tài khoản thành công:', response);
+        this.loadUserAccount(); // Load lại danh sách
+        this.showSuccessMessage("Sửa tài khoản thành công!");
+        setTimeout(() => {
+          this.closeModal_update();
+        }, 2000);
+      },
+      error: (err) => {
+        console.error('Lỗi khi sửa tài khoản:', err);
+        this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
+      }
     });
   }
 
@@ -136,10 +136,10 @@ export class AccountsInfoComponent {
     confirmPassword: ''
   };
 
-    // Mở modal thay đổi mật khẩu
+  // Mở modal thay đổi mật khẩu
   openChangePasswordModal(): void {
     this.isEditMode = true;
-    this.changePasswordForm = { ...this.changePasswordForm }; 
+    this.changePasswordForm = { ...this.changePasswordForm };
     const modalElement = document.getElementById('changePasswordModal');
     if (modalElement) {
       const modalInstance = new bootstrap.Modal(modalElement);
@@ -163,9 +163,9 @@ export class AccountsInfoComponent {
       next: (response) => {
         this.showSuccessMessage("Mật khẩu đã được thay đổi thành công!");
         this.loadUserAccount(); // Load lại danh sách
-            setTimeout(() => {
-              this.closeModal();
-            }, 2000);
+        setTimeout(() => {
+          this.closeModal();
+        }, 2000);
       },
       error: (err) => {
         this.showSuccessMessage(err.error?.message || "Lỗi khi cập nhật mật khẩu");
@@ -193,6 +193,21 @@ export class AccountsInfoComponent {
     } else if (type === 'confirm') {
       this.showConfirmPassword = !this.showConfirmPassword;
     }
+  }
+
+  get profileCompletion() {
+    if (!this.accountsForm) return 0;
+
+    let totalFields = 5;
+    let filledFields = 0;
+
+    if (this.accountsForm.username) filledFields++;
+    if (this.accountsForm.email) filledFields++;
+    if (this.accountsForm.fullname) filledFields++;
+    if (this.accountsForm.role) filledFields++;
+    if (this.accountsForm.status) filledFields++;
+
+    return Math.round((filledFields / totalFields) * 100);
   }
 
 }

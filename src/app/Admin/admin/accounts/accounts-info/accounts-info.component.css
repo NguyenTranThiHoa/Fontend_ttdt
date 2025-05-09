@@ -1,0 +1,30 @@
+.profile-page {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-image {
+    background-image: url('/assets/img/AnhNen2.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 35%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.profile-info {
+    position: absolute;
+    top: 18%;
+    width: 100%;
+    z-index: 2;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+}
+

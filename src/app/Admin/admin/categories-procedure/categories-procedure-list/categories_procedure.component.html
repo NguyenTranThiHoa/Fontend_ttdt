@@ -81,13 +81,19 @@
                 </div>
                 <form (ngSubmit)="saveCategories_fiels()">
                     <div class="mb-3">
-                        <label for="name_category" class="form-label" style="font-weight: bold;">Tên danh mục Thủ tục -
-                            Hành chính</label>
+                        <!-- <label for="name_category" class="form-label" style="font-weight: bold;">Tên danh mục Thủ tục -
+                            Hành chính</label> -->
+                        <label for="name_category" class="form-label" style="font-weight: bold;">
+                            Tên danh mục Thủ tục - Hành chính <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="category_fieldForm.name_Field"
                             name="name_category" required placeholder="Nhập tên danh mục...." />
                     </div>
                     <div class="mb-3">
-                        <label for="fielParentId" class="form-label" style="font-weight: bold;">Chọn danh mục</label>
+                        <!-- <label for="fielParentId" class="form-label" style="font-weight: bold;">Chọn danh mục</label> -->
+                        <label for="fielParentId" class="form-label" style="font-weight: bold;">
+                            Chọn danh mục <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-control" [(ngModel)]="category_fieldForm.fielParentId" name="fielParentId"
                             (change)="onParentIdChange($event)">
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
@@ -165,15 +171,16 @@
                 *ngFor="let category of filteredCategories | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                 <tr>
                     <td><input type="checkbox" [(ngModel)]="category.selected" [name]="'checkbox-' + i"></td>
-                    <td>{{ category.id_Field }}</td>
+                    <!-- <td>{{ category.id_Field }}</td> -->
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td [ngClass]="{'root-category': category.fielParentId === null}">
                         {{ getCategoryFullName(category, 0) }}
                     </td>
                     <td>{{ getParentName(category.fielParentId) }}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(category)"><i
+                        <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(category)"><i
                                 class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm me-2" (click)="DeleteCategories(category.id_Field)"><i
+                        <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteCategories(category.id_Field)"><i
                                 class="bi bi-trash"></i></button>
                     </td>
                 </tr>
@@ -196,9 +203,9 @@
             </td>
             <td>{{ getParentName(child.fielParentId) }}</td>
             <td>
-                <button class="btn btn-primary btn-sm me-2" (click)="openEditModal(child)"><i
+                <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditModal(child)"><i
                         class="bi bi-pencil"></i></button>
-                <button class="btn btn-danger btn-sm me-2" (click)="DeleteCategories(child.id_Field)"><i
+                <button class="btn btn-sm me-2" style="color: red; border: 1px solid;" (click)="DeleteCategories(child.id_Field)"><i
                         class="bi bi-trash"></i></button>
             </td>
         </tr>

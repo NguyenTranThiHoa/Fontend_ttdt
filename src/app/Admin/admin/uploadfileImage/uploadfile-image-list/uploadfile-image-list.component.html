@@ -154,14 +154,14 @@
                                 <td>{{ image.uploadedAt | date: 'dd-MM-yyyy'}}</td>
                                 <td>
                                     <!-- Nút Xóa -->
-                                    <button class="btn btn-danger btn-sm me-2" (click)="openDeleteImageModal(image.id_Image)">
+                                    <button class="btn btn-sm me-2"  style="color: red; border: 1px solid;" (click)="openDeleteImageModal(image.id_Image)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                     <!-- Nút Sửa -->
-                                    <button class="btn btn-primary btn-sm me-2" (click)="openEditImageModal(image)">
+                                    <button class="btn btn-sm me-2" style="color: blue; border: 1px solid;" (click)="openEditImageModal(image)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-info btn-sm" (click)="openMoveImageModal(image.id_Image)">
+                                    <button class="btn btn-sm" style="color: rgb(53, 242, 249); border: 1px solid;" (click)="openMoveImageModal(image.id_Image)">
                                         <i class="bi bi-arrows-move"></i>
                                     </button>
                                 </td>
@@ -220,7 +220,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"
-                    style="justify-content: center; font-weight: bold; font-family: 'Times New Roman', Times, serif; padding: 0px 100px;"
+                    style="justify-content: center; font-weight: bold; font-family: 'Times New Roman', Times, serif; margin-left: 70px;"
                     id="folderModalLabel">
                     {{ isEditMode ? 'SỬA' : 'THÊM' }} THƯ MỤC HÌNH ẢNH
                 </h4>
@@ -229,12 +229,18 @@
             <div class="modal-body">
                 <form (ngSubmit)="saveFolder()">
                     <div class="mb-3">
-                        <label for="name_folder" class="form-label" style="font-weight: bold;">Tên thư mục</label>
+                        <!-- <label for="name_folder" class="form-label" style="font-weight: bold;">Tên thư mục</label> -->
+                        <label for="name_folder" class="form-label" style="font-weight: bold;">
+                            Tên thư mục <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="folderForm.name_folder" name="name_folder"
                             required placeholder="Nhập tên thư mục...." />
                     </div>
                     <div class="mb-3">
-                        <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label>
+                        <!-- <label for="parentId" class="form-label" style="font-weight: bold;">Chọn thư mục cha</label> -->
+                        <label for="parentId" class="form-label" style="font-weight: bold;">
+                            Chọn thư mục cha <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-select" [(ngModel)]="folderForm.parentId" name="parentId">
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folder">
@@ -293,17 +299,19 @@
 
 <!-- Modal Di Chuyển Ảnh -->
 <div class="modal fade" id="moveImageModal" tabindex="-1" aria-labelledby="moveImageModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 40%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="moveImageModalLabel" style="margin-left: 150px;">DI CHUYỂN ẢNH</h5>
+                <h5 class="modal-title" id="moveImageModalLabel" style="margin-left: 170px; font-family: 'Times New Roman', Times, serif; font-weight: bold;">DI CHUYỂN ẢNH</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('moveImageModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="moveImage(selectedImageId, selectedTargetFolderId)">
                     <div class="mb-3">
-                        <label for="targetFolderId" class="form-label" style="font-weight: bold;">Chọn thư mục đích</label>
+                        <label for="targetFolderId" class="form-label" style="font-weight: bold;">
+                            Chọn thư mục đích: <span style="color: red;">(*)</span>
+                        </label>
                         <select class="form-select" [(ngModel)]="selectedTargetFolderId" name="targetFolderId"
                             required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
@@ -316,7 +324,7 @@
                             </ng-container>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 130px; padding: 5px 30px;">
+                    <button type="submit" class="btn btn-primary me-2" style="margin-left: 200px; padding: 5px 30px;">
                         <i class="bi bi-arrows-move" style="padding: 0px 10px;"></i>Di Chuyển</button>
                 </form>
             </div>
@@ -351,30 +359,35 @@
     <div class="modal-dialog" style="max-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editImageModalLabel" style="margin-left: 350px;">SỬA HÌNH ẢNH</h5>
+                <h5 class="modal-title" id="editImageModalLabel" style="margin-left: 350px; font-family: 'Times New Roman', Times, serif; font-weight: bold;">SỬA HÌNH ẢNH</h5>
                 <button type="button" class="btn-close"
                     (click)="hideModal(getModalInstance('editImageModal'))"></button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="updateImage(selectedImageId, imageForm)">
                     <div class="mb-3">
-                        <label for="fileName" class="form-label" style="font-weight: bold;">Tên Hình Ảnh</label>
+                        <label for="fileName" class="form-label" style="font-weight: bold;">
+                            Tên hình ảnh: <span style="color: red;">(*)</span>
+                        </label>
                         <input type="text" class="form-control" [(ngModel)]="imageForm.fileName" name="fileName"
                             required>
                     </div>
                     <div class="mb-3">
-                        <label for="file" class="form-label" style="font-weight: bold;">Chọn Ảnh Mới</label>
+                        <label for="file" class="form-label" style="font-weight: bold;">
+                            Chọn ảnh mới: <span style="color: red;">(*)</span>
+                        </label>
                         <input type="file" class="form-control" (change)="onImageSelected($event)" accept="image/*" name="image" />
-                        <div class="mt-3" *ngIf="imagePreview">
-                            <img [src]="imagePreview" (error)="handleImageError($event, imageForm)" alt="Xem trước ảnh" class="img-thumbnail"
+                        <div class="mt-3" *ngIf="imagePreview1">
+                            <img [src]="imagePreview1" (error)="handleImageError($event, imageForm)" alt="Xem trước ảnh" class="img-thumbnail"
                                 style="max-width: 200px; max-height: 200px;">
                         </div>
-
                     </div>
 
                     <div class="mb-3">
-                        <label for="folder" class="form-label" style="font-weight: bold;">Chọn Thư Mục</label>
-                        <select class="form-control" [(ngModel)]="imageForm.id_folder" name="folder" required>
+                        <label for="folder" class="form-label" style="font-weight: bold;">
+                            Chọn thư mục mới: <span style="color: red;">(*)</span>
+                        </label>
+                        <select class="form-select" [(ngModel)]="imageForm.id_folder" name="folder" required>
                             <option [value]="null">Không có cha (Cấp cao nhất)</option>
                             <ng-container *ngFor="let folder of folder">
                                 <option [value]="folder.id_folder">{{ folder.name_folder }}</option>
