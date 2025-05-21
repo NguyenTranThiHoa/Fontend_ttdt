@@ -6,71 +6,6 @@
         (click)="successMessage=''"></button>
 </div>
 
-<!-- <div class="container mt-4">
-    <h3 class="text-center" style="font-weight: bold;"><em>THÔNG TIN CÁ NHÂN</em></h3>
-
-    <div class="card p-4 shadow">
-        <div class="row">
-            <div class="col-md-4 text-center" style="padding: 50px 10px;">
-                <img src="/assets/img/AnhDaiDien.png" class="img-fluid" alt="Avatar"
-                    style="width: 200px; height: 200px;">
-            </div>
-
-            <div class="col-md-8">
-                <table class="table" *ngIf="accountsForm">
-                    <tbody>
-                        <tr>
-                            <th>Tên đăng nhập:</th>
-                            <td>{{ accountsForm.username }}</td>
-                        </tr>
-                        <tr>
-                            <th>Mật khẩu:</th>
-                            <td>******</td> 
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td>{{ accountsForm.email }}</td>
-                        </tr>
-                        <tr>
-                            <th>Họ và tên:</th>
-                            <td>{{ accountsForm.fullname }}</td>
-                        </tr>
-                        <tr>
-                            <th>Vai trò:</th>
-                            <td>
-                                <span class="badge" [ngClass]="{
-                                        'bg-primary text-white': accountsForm.role === 'Admin',
-                                        'bg-warning text-dark': accountsForm.role === 'Manager'
-                                    }">
-                                    {{ accountsForm.role }}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Trạng thái:</th>
-                            <td>
-                                <span class="badge" [ngClass]="{
-                                        'bg-success': accountsForm.status === 'Active',
-                                        'bg-danger': accountsForm.status === 'Inactive'
-                                    }">
-                                    {{ accountsForm.status }}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p *ngIf="!accountsForm" class="text-danger">Không thể tải thông tin tài khoản.</p>
-            </div>
-        </div>
-
-        <div class="text-center mt-3">
-            <button class="btn btn-primary me-2" (click)="openEditProfileModal()">Cập nhật thông tin</button>
-            
-            <button class="btn btn-warning" (click)="openChangePasswordModal()">Thay đổi mật khẩu</button>
-        </div>
-    </div>
-</div> -->
-
 <div class="profile-page">
     <!-- Hình nền -->
     <div class="background-image"></div>
@@ -140,7 +75,7 @@
                                     <td>
                                         <span class="badge" [ngClass]="{
                                             'bg-success': accountsForm.status === 'Active',
-                                            'bg-danger': accountsForm.status === 'Inactive'
+                                            'bg-danger': accountsForm.status === 'InActive'
                                         }">
                                             {{ accountsForm.status }}
                                         </span>
@@ -180,18 +115,24 @@
                         <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username" disabled>
                     </div>
                     <div class="mb-3">
-                        <!-- <label class="form-label" style="font-weight: bold;">Email:</label> -->
                         <label for="email" class="form-label" style="font-weight: bold;">
                             Email:<span style="color: red;">(*)</span>
                         </label>
                         <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email">
+                        <div class="text-danger mt-1" *ngIf="validationMessage.email">
+                            {{ validationMessage.email }}              
+                        </div>
+                        <!-- <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email"> -->
                     </div>
                     <div class="mb-3">
-                        <!-- <label class="form-label" style="font-weight: bold;">Họ và tên:</label> -->
                         <label for="fullname" class="form-label" style="font-weight: bold;">
                             Họ và tên:<span style="color: red;">(*)</span>
                         </label>
                         <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname">
+                        <div class="text-danger mt-1" *ngIf="validationMessage.fullname">
+                            {{ validationMessage.fullname }}              
+                        </div>
+                        <!-- <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname"> -->
                     </div>
                     <button type="submit" class="btn w-30" style="margin-left: 150px; background-color: #586b9c; color: white;"><i class="bi bi-save2" style="padding: 0px 10px;"></i>Lưu thay đổi</button>
                 </form>
@@ -200,8 +141,9 @@
     </div>
 </div>
 
+
 <!-- Modal thay đổi mật khẩu -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+<!-- <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-black" style="background-color: #bbc45ce3;">
@@ -211,7 +153,6 @@
             <div class="modal-body">
                 <form (ngSubmit)="updatePassword()">
                     <div class="mb-3 position-relative">
-                        <!-- <label class="form-label" style="font-weight: bold;">Mật khẩu cũ:</label> -->
                         <label for="oldPassword" class="form-label" style="font-weight: bold;">
                             Mật khẩu cũ:<span style="color: red;">(*)</span>
                         </label>
@@ -222,7 +163,6 @@
                             style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
                     </div>
                     <div class="mb-3 position-relative">
-                        <!-- <label class="form-label" style="font-weight: bold;">Mật khẩu mới:</label> -->
                         <label for="newPassword" class="form-label" style="font-weight: bold;">
                             Mật khẩu mới:<span style="color: red;">(*)</span>
                         </label>
@@ -233,7 +173,6 @@
                             style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
                     </div>
                     <div class="mb-3 position-relative">
-                        <!-- <label class="form-label" style="font-weight: bold;">Xác nhận mật khẩu mới:</label> -->
                         <label for="confirmPassword" class="form-label" style="font-weight: bold;">
                             Xác nhận mật khẩu mới:<span style="color: red;">(*)</span>
                         </label>
@@ -248,4 +187,66 @@
             </div>
         </div>
     </div>
+</div> -->
+
+
+<!-- Modal thay đổi mật khẩu -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-black" style="background-color: #bbc45ce3;">
+                <h5 class="modal-title" style="margin-left: 130px;">THAY ĐỔI MẬT KHẨU</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="updatePassword()">
+                    <!-- Mật khẩu cũ -->
+                    <div class="mb-3 position-relative">
+                        <label class="form-label fw-bold">Mật khẩu cũ:<span class="text-danger">(*)</span></label>
+                        <input [type]="showOldPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.oldPassword" name="oldPassword">
+                        <i class="bi" [ngClass]="showOldPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('old')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                        <div class="text-danger mt-1" *ngIf="passwordValidationMessage.oldPassword">
+                            {{ passwordValidationMessage.oldPassword }}
+                        </div>
+                    </div>
+
+                    <!-- Mật khẩu mới -->
+                    <div class="mb-3 position-relative">
+                        <label class="form-label fw-bold">Mật khẩu mới:<span class="text-danger">(*)</span></label>
+                        <input [type]="showNewPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.newPassword" name="newPassword">
+                        <i class="bi" [ngClass]="showNewPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('new')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                        <div class="text-danger mt-1" *ngIf="passwordValidationMessage.newPassword">
+                            {{ passwordValidationMessage.newPassword }}
+                        </div>
+                    </div>
+
+                    <!-- Xác nhận mật khẩu -->
+                    <div class="mb-3 position-relative">
+                        <label class="form-label fw-bold">Xác nhận mật khẩu mới:<span
+                                class="text-danger">(*)</span></label>
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                            [(ngModel)]="changePasswordForm.confirmPassword" name="confirmPassword">
+                        <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                            (click)="togglePasswordVisibility('confirm')"
+                            style="position: absolute; right: 10px; top: 38px; cursor: pointer;"></i>
+                        <div class="text-danger mt-1" *ngIf="passwordValidationMessage.confirmPassword">
+                            {{ passwordValidationMessage.confirmPassword }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn w-30"
+                        style="margin-left: 120px; background-color: #bbc45ce3; font-weight: bold;">
+                        <i class="bi bi-pencil" style="padding: 0 10px;"></i>Cập nhật mật khẩu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+  

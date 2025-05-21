@@ -45,8 +45,7 @@
             <label class="me-2">Cỡ chữ:</label>
             <button (click)="increaseFontSize()" class="btn btn-sm btn-outline-primary">+</button>
             <button (click)="decreaseFontSize()" class="btn btn-sm btn-outline-primary ms-1">-</button>
-            <button (click)="readArticle()" class="btn btn-sm btn-primary ms-3">🔊 Đọc bài viết</button>
-            <button (click)="stopReading()" class="btn btn-sm btn-danger ms-2">⏹ Dừng</button>
+           
           </div>
         </div>
         <p class="card-text content" [style.fontSize.px]="fontSize" [innerHTML]="newsDetail.formatted_content">

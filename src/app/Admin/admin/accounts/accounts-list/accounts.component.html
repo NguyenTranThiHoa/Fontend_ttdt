@@ -19,10 +19,26 @@
             <option [value]="15">15</option>
         </select>
     </div>    
-    <div class="search-box">
+    <!-- <div class="search-box">
         <input type="search" placeholder="Tìm kiếm" aria-label="Search">
         <button type="submit"><i class="bi bi-search"></i></button>
+    </div> -->
+
+    <div class="search-box">
+        <input type="search" placeholder="Tìm kiếm" [(ngModel)]="searchQuery" aria-label="Search">
+        <button type="submit"><i class="bi bi-search"></i></button>
     </div>
+    
+    <!-- Dropdown lọc vai trò -->
+    <div style="font-weight: 500;">
+        <select class="form-select" style="width: 150px; margin-left: 20px;" [(ngModel)]="selectedFilterRole"
+            (change)="page = 1">
+            <option value="All">Tất cả</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+        </select>
+    </div>
+      
     <div>
         <button class="btn btn-primary" (click)="openCreateModal()" style="padding: 5px 30px; background-color: #90cdf4; color: black; font-weight: 600;"
             [disabled]="!isAdmin && (!permissions || !permissions.canAddUser)">
@@ -30,6 +46,14 @@
         THÊM MỚI
         </button>
     </div>
+
+    <div>
+        <button type="button" class="btn btn-success" (click)="printAccounts()"
+            style="background-color: #ebf8ff; font-weight: 600; color: black;">
+            <i class="bi bi-printer" style="padding: 0px 10px; color: rgb(151, 151, 31);"></i> IN DANH SÁCH
+        </button>
+    </div>
+
 </div>
 
 <div class="table-responsive" id="categoryTable" style="padding: 0px 20px">
@@ -94,8 +118,16 @@
                 </td>
 
                 <!-- Nút nâng cấp lên Admin (chỉ hiển thị nếu là Manager) -->
-                <td *ngIf="account.role === 'Manager' && account.username !== loggedInUsername">
+                <!-- <td *ngIf="account.role === 'Manager' && account.username !== loggedInUsername">
                     <button class="btn btn-warning btn-sm" (click)="openUpgradeModal(account)" [disabled]="isManager">
+                        <i class="bi bi-person-up"></i>
+                    </button>
+                </td> -->
+
+                <!-- Nút nâng cấp lên Admin (chỉ hiển thị nếu là Manager) -->
+                <td *ngIf="account.role === 'Manager' && account.username !== loggedInUsername">
+                    <button class="btn btn-warning btn-sm" (click)="openUpgradeModal(account)"
+                        [disabled]="isManager || account.status === 'Inactive'">
                         <i class="bi bi-person-up"></i>
                     </button>
                 </td>
@@ -236,51 +268,79 @@
         aria-hidden="true">
     <div class="modal-dialog modal-lg" style="max-width: 700px;">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: white;">
-                <h5 class="modal-title" id="accounsModalLabel" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+            <div class="modal-header" style="background-color: #394367; color: white;">
+                <h5 class="modal-title" id="accounsModalLabel" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; color: white;">
                     THÊM NGƯỜI DÙNG</h5>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="saveAccounts()">
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="username" class="form-label" style="font-weight: bold;">
                             Tên đăng nhập:<span style="color: red;">(*)</span>
                         </label>
                         <input type="text" class="form-control" [(ngModel)]="registerModel.username"
                             name="username" required />
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
-                        <label for="password" class="form-label" style="font-weight: bold;">
-                            Mật khẩu:<span style="color: red;">(*)</span>
-                        </label>
-                        <!-- <input type="password" class="form-control" [(ngModel)]="registerModel.password" name="password"
-                            required /> -->
-
-                        <input type="{{passwordVisible ? 'text' : 'password'}}" id="password" class="form-control"
-                            [(ngModel)]="registerModel.password" name="password" required placeholder="Mật khẩu">
-                        <span class="input-group-text" (click)="togglePasswordVisibility()">
-                            <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
-                        </span>
+                        <label class="form-label fw-bold">Tên đăng nhập:<span style="color: red;">(*)</span></label>
+                        <input type="text" class="form-control" [(ngModel)]="registerModel.username" name="username" />
+                        <div class="text-danger mt-1" *ngIf="validationErrors.username">{{ validationErrors.username }}</div>                
                     </div>
 
+                    <!-- <div class="mb-3">
+                        <label for="password" class="form-label" style="font-weight: bold;">Mật khẩu:<span
+                                style="color: red;">(*)</span></label>
+                        <div class="input-group">
+                            <input [type]="passwordVisible ? 'text' : 'password'" id="password" class="form-control"
+                                [(ngModel)]="registerModel.password" name="password" required placeholder="Mật khẩu">
+                            <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                                <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+                            </button>
+                        </div>
+                    </div>       -->
+                    
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Mật khẩu:<span style="color: red;">(*)</span></label>
+                        <div class="input-group">
+                            <input [type]="passwordVisible ? 'text' : 'password'" class="form-control" [(ngModel)]="registerModel.password"
+                                name="password" />
+                            <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                                <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+                            </button>
+                        </div>
+                        <div class="text-danger mt-1" *ngIf="validationErrors.password">{{ validationErrors.password }}</div>                
+                    </div>
+
+                    <!-- <div class="mb-3">
                         <label for="email" class="form-label" style="font-weight: bold;">
                             Email:<span style="color: red;">(*)</span>
                         </label>
                         <input type="email" class="form-control" [(ngModel)]="registerModel.email"
                             name="email" required />
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Email:<span style="color: red;">(*)</span></label>
+                        <input type="email" class="form-control" [(ngModel)]="registerModel.email" name="email" />
+                        <div class="text-danger mt-1" *ngIf="validationErrors.email">{{ validationErrors.email }}</div>                
+                    </div>
+
+                    <!-- <div class="mb-3">
                         <label for="fullname" class="form-label" style="font-weight: bold;">
                             Họ và tên:<span style="color: red;">(*)</span>
                         </label>
                         <input type="text" class="form-control" [(ngModel)]="registerModel.fullname"
                             name="fullname" required />
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Họ và tên:<span style="color: red;">(*)</span></label>
+                        <input type="text" class="form-control" [(ngModel)]="registerModel.fullname" name="fullname" />
+                        <div class="text-danger mt-1" *ngIf="validationErrors.fullname">{{ validationErrors.fullname }}</div>                
+                    </div>
+
+                    <!-- <div class="mb-3">
                         <label for="role" class="form-label" style="font-weight: bold;">
                             Vai trò:<span style="color: red;">(*)</span>
                         </label>
@@ -288,6 +348,16 @@
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
                         </select>
+                    </div> -->
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Vai trò:<span style="color: red;">(*)</span></label>
+                        <select class="form-select" [(ngModel)]="registerModel.role" name="role">
+                            <option value="" disabled selected>-- Chọn vai trò --</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <div class="text-danger mt-1" *ngIf="validationErrors.role">{{ validationErrors.role }}</div>                
                     </div>
 
                     <div class="modal-footer">
@@ -306,8 +376,8 @@
     aria-hidden="true">
     <div class="modal-dialog modal-lg" style="max-width: 700px;">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: white;">
-                <h5 class="modal-title" id="accounsModalLabel1" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+            <div class="modal-header" style="background-color: #394367; color: white;">
+                <h5 class="modal-title" id="accounsModalLabel1" style="font-weight: bold; margin-left: 250px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; color: white;">
                     SỬA NGƯỜI DÙNG</h5>
             </div>
             <div class="modal-body">
@@ -316,34 +386,47 @@
                         <label for="username" class="form-label" style="font-weight: bold;">
                             Tên đăng nhập:<span style="color: red;">(*)</span>
                         </label>
-                        <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username"
-                            required />
+                        <!-- <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username"
+                            required /> -->
+
+                        <input type="text" class="form-control" [(ngModel)]="accountsForm.username" name="username" required />
+                            <div class="text-danger" *ngIf="validationErrors_Sua.username">{{ validationErrors_Sua.username }}</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label" style="font-weight: bold;">
                             Email:<span style="color: red;">(*)</span>
                         </label>
-                        <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email"
-                            required />
+                        <!-- <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email" required /> -->
+
+                        <input type="email" class="form-control" [(ngModel)]="accountsForm.email" name="email" required />
+                        <div class="text-danger" *ngIf="validationErrors_Sua.email">{{ validationErrors_Sua.email }}</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="fullname" class="form-label" style="font-weight: bold;">
                             Họ và tên:<span style="color: red;">(*)</span>
                         </label>
-                        <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname"
-                            required />
+                        <!-- <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname"
+                            required /> -->
+                        
+                        <input type="text" class="form-control" [(ngModel)]="accountsForm.fullname" name="fullname" required />
+                            <div class="text-danger" *ngIf="validationErrors_Sua.fullname">{{ validationErrors_Sua.fullname }}</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="role" class="form-label" style="font-weight: bold;">
                             Vai trò:<span style="color: red;">(*)</span>
                         </label>
-                        <select class="form-control" [(ngModel)]="accountsForm.role" name="role" required>
+                        <!-- <select class="form-control" [(ngModel)]="accountsForm.role" name="role" required>
                             <option value="Manager">Manager</option>
                             <option value="Admin">Admin</option>
-                        </select>
+                        </select> -->
+
+                        <select class="form-select" [(ngModel)]="accountsForm.role" name="role" [disabled]="isManager" required>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>                          
                     </div>
 
                     <div class="modal-footer">
@@ -355,7 +438,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Modal xác nhận xóa tài khoản -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"

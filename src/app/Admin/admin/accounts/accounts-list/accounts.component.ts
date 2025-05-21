@@ -102,13 +102,23 @@ export class AccountsListComponent implements OnInit {
     });
   }
 
+  // get filteredAccounts(): Accounts[] {
+  //   if (!this.searchQuery) {
+  //     return this.accounts;
+  //   }
+  //   return this.accounts.filter(account =>
+  //     account.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+  //   );
+  // }
+
+  selectedFilterRole: string = 'All';  // All, Admin, Manager, User,...
+
   get filteredAccounts(): Accounts[] {
-    if (!this.searchQuery) {
-      return this.accounts;
-    }
-    return this.accounts.filter(account =>
-      account.username.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+    return this.accounts.filter(account => {
+      const matchesSearch = !this.searchQuery || account.username.toLowerCase() || account.fullname.includes(this.searchQuery.toLowerCase());
+      const matchesRole = this.selectedFilterRole === 'All' || account.role === this.selectedFilterRole;
+      return matchesSearch && matchesRole;
+    });
   }
 
   showModal(modalId: string, message?: string): void {
@@ -216,18 +226,6 @@ export class AccountsListComponent implements OnInit {
   }
 
   /***********************************************/
-  // permissions: AssignPermissions = {
-  //   managerId: 0,
-  //   canAddUser: false,
-  //   canEditUser: false,
-  //   canDeleteUser: false,
-  //   canManageRoles: false,
-  //   canManagePermissions: false,
-  //   canViewUsers: true
-  // };
-
-  // permissions: AssignPermissions | null = null; // Không có giá trị mặc định
-  
   permissionList = [
     { name: 'Thêm tài khoản', key: 'canAddUser' },
     { name: 'Sửa tài khoản', key: 'canEditUser' },
@@ -350,9 +348,6 @@ export class AccountsListComponent implements OnInit {
     console.log("Tất cả quyền đã được đặt lại:", this.permissions); // 🛠 Kiểm tra trong Console
   }
 
-  // isManager: boolean = false; // Kiểm tra nếu tài khoản đăng nhập là Manager
-
-
   /*********************************Thêm người dùng*******************************/
   registerModel: { username: string; password: string; email: string; fullname: string; role: string } = {
     username: '',
@@ -382,25 +377,24 @@ export class AccountsListComponent implements OnInit {
     }
   }
 
-  saveAccounts(): void {
-    console.log('Dữ liệu gửi đi:', this.registerModel);
+  // saveAccounts(): void {
+  //   console.log('Dữ liệu gửi đi:', this.registerModel);
 
-    this.authService.register(this.registerModel).subscribe({
-        next: (response) => {
-            console.log('Tạo tài khoản thành công:', response);
-            this.showSuccessMessage("Tạo tài khoản thành công!");
-            this.closeModal(); // Đóng modal
-            this.loadAccounts(); // Load lại dữ liệu mới nhất
-      },
-        error: (err) => {
-            console.error('Lỗi khi tạo tài khoản:', err);
-            this.showSuccessMessage("Lỗi khi tạo tài khoản: " + (err.error?.message || err.message));
-        }
-    });
-  }
+  //   this.authService.register(this.registerModel).subscribe({
+  //       next: (response) => {
+  //           console.log('Tạo tài khoản thành công:', response);
+  //           this.showSuccessMessage("Tạo tài khoản thành công!");
+  //           this.closeModal(); // Đóng modal
+  //           this.loadAccounts(); // Load lại dữ liệu mới nhất
+  //     },
+  //       error: (err) => {
+  //           console.error('Lỗi khi tạo tài khoản:', err);
+  //           this.showSuccessMessage("Lỗi khi tạo tài khoản: " + (err.error?.message || err.message));
+  //       }
+  //   });
+  // }
 
   /*********************************Sửa người dùng**************************/
-
   accountsForm: Accounts = {
     id_account: 0,
     username: '',
@@ -447,22 +441,22 @@ export class AccountsListComponent implements OnInit {
     };
   }
 
-  saveAccounts_Update(): void {
-    console.log('Dữ liệu gửi đi:', this.accountsForm);
+  // saveAccounts_Update(): void {
+  //   console.log('Dữ liệu gửi đi:', this.accountsForm);
 
-    this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
-        next: (response) => {
-            console.log('Sửa tài khoản thành công:', response);
-            this.showSuccessMessage("Sửa tài khoản thành công!");
-            this.closeModal_update(); // Đóng modal
-            this.loadAccounts(); // Load lại danh sách
-        },
-        error: (err) => {
-            console.error('Lỗi khi sửa tài khoản:', err);
-            this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
-        }
-    });
-  }
+  //   this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
+  //       next: (response) => {
+  //           console.log('Sửa tài khoản thành công:', response);
+  //           this.showSuccessMessage("Sửa tài khoản thành công!");
+  //           this.closeModal_update(); // Đóng modal
+  //           this.loadAccounts(); // Load lại danh sách
+  //       },
+  //       error: (err) => {
+  //           console.error('Lỗi khi sửa tài khoản:', err);
+  //           this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
+  //       }
+  //   });
+  // }
 
   /*************************************Xóa tài khoản*********************************/
   openDeleteModal(account: Accounts): void {
@@ -502,6 +496,7 @@ export class AccountsListComponent implements OnInit {
   }
 
 
+  /********************Hiện con mắt của mật khẩu********************/
   // Biến để điều khiển việc hiển thị mật khẩu
   passwordVisible: boolean = false;
 
@@ -510,6 +505,285 @@ export class AccountsListComponent implements OnInit {
     this.passwordVisible = !this.passwordVisible;
   }
 
+  /****************************Thử Demo*********************************/
+  validationErrors = {
+    username: '',
+    password: '',
+    email: '',
+    fullname: '',
+    role: ''
+  };
+  
+  validateForm(): boolean {
+    let isValid = true;
+  
+    // Reset lỗi cũ
+    this.validationErrors = {
+      username: '',
+      password: '',
+      email: '',
+      fullname: '',
+      role: ''
+    };
+  
+    // Tên đăng nhập
+    if (!this.registerModel.username) {
+      this.validationErrors.username = 'Tên đăng nhập không được để trống.';
+      isValid = false;
+    } else if (/\s/.test(this.registerModel.username)) {
+      this.validationErrors.username = 'Tên đăng nhập không được chứa khoảng trắng.';
+      isValid = false;
+    } else if (this.registerModel.username.length > 12) {
+      this.validationErrors.username = 'Tên đăng nhập tối đa 12 ký tự.';
+      isValid = false;
+    } else if (!/[a-z]/.test(this.registerModel.username) || !/[A-Z]/.test(this.registerModel.username)) {
+      this.validationErrors.username = 'Tên đăng nhập phải có chữ thường và chữ hoa.';
+      isValid = false;
+    }
+  
+    // Mật khẩu
+    if (!this.registerModel.password) {
+      this.validationErrors.password = 'Mật khẩu không được để trống.';
+      isValid = false;
+    } else if (/\s/.test(this.registerModel.password)) {
+      this.validationErrors.password = 'Mật khẩu không được chứa khoảng trắng.';
+      isValid = false;
+    } else if (this.registerModel.password.length < 8) {
+      this.validationErrors.password = 'Mật khẩu phải từ 8 ký tự.';
+      isValid = false;
+    } else if (!/[a-z]/.test(this.registerModel.password) || !/[A-Z]/.test(this.registerModel.password)) {
+      this.validationErrors.password = 'Mật khẩu phải có chữ thường và chữ hoa.';
+      isValid = false;
+    } else if (!/[0-9]/.test(this.registerModel.password)) {
+      this.validationErrors.password = 'Mật khẩu phải chứa ít nhất 1 số.';
+      isValid = false;
+    }
+  
+    // Email
+    if (!this.registerModel.email) {
+      this.validationErrors.email = 'Email không được để trống.';
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(this.registerModel.email)) {
+      this.validationErrors.email = 'Email phải đúng định dạng @gmail.com.';
+      isValid = false;
+    }
+  
+    // Họ và tên
+    if (!this.registerModel.fullname) {
+      this.validationErrors.fullname = 'Họ và tên không được để trống.';
+      isValid = false;
+    } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(this.registerModel.fullname)) {
+      this.validationErrors.fullname = 'Họ và tên chỉ được chứa chữ và khoảng trắng.';
+      isValid = false;
+    }
+  
+    // Vai trò
+    if (!this.registerModel.role) {
+      this.validationErrors.role = 'Vai trò phải được chọn.';
+      isValid = false;
+    }
+  
+    return isValid;
+  }
+
+  saveAccounts(): void {
+    if (!this.validateForm()) {
+      return;
+    }
+  
+    this.authService.register(this.registerModel).subscribe({
+      next: (response) => {
+        console.log('Tạo tài khoản thành công:', response);
+        this.showSuccessMessage("Tạo tài khoản thành công!");
+        this.closeModal();
+        this.loadAccounts();
+      },
+      error: (err) => {
+        console.error('Lỗi khi tạo tài khoản:', err);
+        this.showSuccessMessage("Lỗi khi tạo tài khoản: " + (err.error?.message || 'Không xác định.'));
+      }
+    });
+  }
+  
+
+  /************************************Thử demo******************************/
+  validationErrors_Sua = {
+    username: '',
+    email: '',
+    fullname: '',
+    password: '',
+  };
+  
+  validateForm_Sua(): boolean {
+    let isValid = true;
+    this.validationErrors_Sua = {
+      username: '',
+      email: '',
+      fullname: '',
+      password: '',
+    };
+  
+    // Validate Username
+    const usernameRegex = /^[A-Za-z0-9]{1,12}$/;
+    if (!this.accountsForm.username) {
+      this.validationErrors_Sua.username = 'Tên đăng nhập không được để trống.';
+      isValid = false;
+    } else if (!usernameRegex.test(this.accountsForm.username)) {
+      this.validationErrors_Sua.username = 'Tên đăng nhập tối đa 12 ký tự, không chứa khoảng trắng.';
+      isValid = false;
+    }
+  
+    // Validate Email
+    const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
+    if (!this.accountsForm.email) {
+      this.validationErrors_Sua.email = 'Email không được để trống.';
+      isValid = false;
+    } else if (!emailRegex.test(this.accountsForm.email)) {
+      this.validationErrors_Sua.email = 'Email phải đúng định dạng @gmail.com.';
+      isValid = false;
+    }
+  
+    // Validate Fullname
+    const fullnameRegex = /^[A-Za-zÀ-Ỹà-ỹ\s]+$/;
+    if (!this.accountsForm.fullname) {
+      this.validationErrors_Sua.fullname = 'Họ và tên không được để trống.';
+      isValid = false;
+    } else if (!fullnameRegex.test(this.accountsForm.fullname)) {
+      this.validationErrors_Sua.fullname = 'Họ và tên chỉ chứa chữ và khoảng trắng.';
+      isValid = false;
+    }
+  
+    return isValid;
+  }
+
+  saveAccounts_Update(): void {
+
+    if (!this.validateForm_Sua()) {
+      return;
+    }
+    console.log('Dữ liệu gửi đi:', this.accountsForm);
+
+    this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
+        next: (response) => {
+            console.log('Sửa tài khoản thành công:', response);
+            this.showSuccessMessage("Sửa tài khoản thành công!");
+            this.closeModal_update(); // Đóng modal
+            this.loadAccounts(); // Load lại danh sách
+        },
+        error: (err) => {
+            console.error('Lỗi khi sửa tài khoản:', err);
+            this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
+        }
+    });
+  }
+
+  /******************************In danh sách tài khoản************************/
+  generatePrintTable(): string {
+    let table = `
+      <h2>DANH SÁCH TÀI KHOẢN</h2>
+      <p>Ngày in: ${this.getCurrentDate()}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Họ và tên</th>
+            <th>Vai trò</th>
+            <th>Ngày tạo</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+  
+    this.accounts.forEach(account => {
+      table += `
+        <tr>
+          <td>${account.username}</td>
+          <td>${account.email}</td>
+          <td>${account.fullname}</td>
+          <td>${account.role}</td>
+          <td>${this.formatDate(account.create_at)}</td>
+        </tr>
+      `;
+    });
+  
+    table += `
+        </tbody>
+      </table>
+    `;
+  
+    return table;
+  }  
+
+  getCurrentDate(): string {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  printAccounts() {
+    const printContent = this.generatePrintTable();
+    const printedBy = sessionStorage.getItem('fullName') || 'Nguyễn Văn A';
+  
+    const WindowPrt = window.open('', '', 'left=0,top=0,width=1000,height=800,toolbar=0,scrollbars=0,status=0');
+    if (WindowPrt) {
+      WindowPrt.document.write(`
+        <html>
+        <head>
+          <title>In Danh Sách Tài Khoản</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #000; }
+            h2 { text-align: center; margin-bottom: 20px; }
+            p { margin: 5px 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+            .footer { margin-top: 80px; width: 100%; }
+            .sign-area {
+              text-align: center;
+              margin-top: 0;
+              margin-right: 60px;
+            }
+            .sign-title {
+              font-weight: bold;
+              margin-bottom: 5px;
+            }
+            .sign-instruction {
+              font-style: italic;
+              margin-bottom: 80px;
+            }
+            .sign-name {
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+  
+          <div class="footer">
+            <div class="sign-area">
+              <p class="sign-title">Người in</p>
+              <p class="sign-instruction">(Ký, ghi rõ họ tên)</p>
+              <p class="sign-name">${printedBy}</p>
+            </div>
+          </div>
+  
+        </body>
+        </html>
+      `);
+      WindowPrt.document.close();
+      WindowPrt.print();
+    }
+  }
   
 
 }

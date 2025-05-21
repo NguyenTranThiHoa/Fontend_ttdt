@@ -97,24 +97,66 @@ export class AccountsInfoComponent {
     }
   }
 
-  saveAccounts_Update(): void {
-    console.log('Dữ liệu gửi đi:', this.accountsForm);
+  // saveAccounts_Update(): void {
+  //   console.log('Dữ liệu gửi đi:', this.accountsForm);
 
+  //   this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
+  //     next: (response) => {
+  //       console.log('Sửa tài khoản thành công:', response);
+  //       this.loadUserAccount(); // Load lại danh sách
+  //       this.showSuccessMessage("Sửa tài khoản thành công!");
+  //       setTimeout(() => {
+  //         this.closeModal_update();
+  //       }, 2000);
+  //     },
+  //     error: (err) => {
+  //       console.error('Lỗi khi sửa tài khoản:', err);
+  //       this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
+  //     }
+  //   });
+  // }
+
+
+  /***********************************Thử demo***********************************/
+  validationMessage = {
+    email: '',
+    fullname: ''
+  };
+  
+  saveAccounts_Update(): void {
+    this.validationMessage = { email: '', fullname: '' }; // reset lỗi cũ
+  
+    // Validate email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!emailRegex.test(this.accountsForm.email)) {
+      this.validationMessage.email = 'Email phải đúng định dạng @gmail.com.';
+    }
+  
+    // Validate fullname
+    const fullnameRegex = /^[A-Za-zÀ-ỹ\s]+$/;
+    if (!fullnameRegex.test(this.accountsForm.fullname)) {
+      this.validationMessage.fullname = 'Họ và tên chỉ được chứa chữ và khoảng trắng, không chứa số hoặc ký tự đặc biệt.';
+    }
+  
+    // Nếu có lỗi thì dừng
+    if (this.validationMessage.email || this.validationMessage.fullname) {
+      return;
+    }
+  
+    // Nếu không lỗi thì gọi API
     this.accountsService.UpdateAccount(this.accountsForm.id_account, this.accountsForm).subscribe({
       next: (response) => {
-        console.log('Sửa tài khoản thành công:', response);
-        this.loadUserAccount(); // Load lại danh sách
         this.showSuccessMessage("Sửa tài khoản thành công!");
-        setTimeout(() => {
-          this.closeModal_update();
-        }, 2000);
+        this.loadUserAccount();
+        this.closeModal_update();
       },
       error: (err) => {
-        console.error('Lỗi khi sửa tài khoản:', err);
         this.showSuccessMessage("Lỗi khi sửa tài khoản: " + (err.error?.message || err.message));
       }
     });
   }
+
+  /*********************************************************************************************/
 
   closeModal_update(): void {
     const modalElement = document.getElementById('editProfileModal');
@@ -130,11 +172,11 @@ export class AccountsInfoComponent {
   }
 
   /***********************************Cập nhật mật khẩu*******************************/
-  changePasswordForm = {
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  };
+  // changePasswordForm = {
+  //   oldPassword: '',
+  //   newPassword: '',
+  //   confirmPassword: ''
+  // };
 
   // Mở modal thay đổi mật khẩu
   openChangePasswordModal(): void {
@@ -147,12 +189,139 @@ export class AccountsInfoComponent {
     }
   }
 
+  // updatePassword(): void {
+  //   if (this.changePasswordForm.newPassword !== this.changePasswordForm.confirmPassword) {
+  //     alert("Mật khẩu mới và xác nhận mật khẩu không khớp!");
+  //     return;
+  //   }
+
+  //   const requestData = {
+  //     id_account: this.accountsForm.id_account,
+  //     oldPassword: this.changePasswordForm.oldPassword,
+  //     newPassword: this.changePasswordForm.newPassword
+  //   };
+
+  //   this.accountsService.UpdatePassword(requestData).subscribe({
+  //     next: (response) => {
+  //       this.showSuccessMessage("Mật khẩu đã được thay đổi thành công!");
+  //       this.loadUserAccount(); // Load lại danh sách
+  //       setTimeout(() => {
+  //         this.closeModal();
+  //       }, 2000);
+  //     },
+  //     error: (err) => {
+  //       this.showSuccessMessage(err.error?.message || "Lỗi khi cập nhật mật khẩu");
+  //     }
+  //   });
+  // }
+
+  closeModal(): void {
+    const modalElement = document.getElementById('changePasswordModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
+      modalInstance?.hide();
+    }
+  }
+
+  // showOldPassword = false;
+  // showNewPassword = false;
+  // showConfirmPassword = false;
+
+  // togglePasswordVisibility(type: string): void {
+  //   if (type === 'old') {
+  //     this.showOldPassword = !this.showOldPassword;
+  //   } else if (type === 'new') {
+  //     this.showNewPassword = !this.showNewPassword;
+  //   } else if (type === 'confirm') {
+  //     this.showConfirmPassword = !this.showConfirmPassword;
+  //   }
+  // }
+
+  get profileCompletion() {
+    if (!this.accountsForm) return 0;
+
+    let totalFields = 5;
+    let filledFields = 0;
+
+    if (this.accountsForm.username) filledFields++;
+    if (this.accountsForm.email) filledFields++;
+    if (this.accountsForm.fullname) filledFields++;
+    if (this.accountsForm.role) filledFields++;
+    if (this.accountsForm.status) filledFields++;
+
+    return Math.round((filledFields / totalFields) * 100);
+  }
+
+  /*****************************Thử demo**************************************/
+  changePasswordForm = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+  
+  passwordValidationMessage = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+  
+  showOldPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+  
+  togglePasswordVisibility(field: string) {
+    if (field === 'old') {
+      this.showOldPassword = !this.showOldPassword;
+    } else if (field === 'new') {
+      this.showNewPassword = !this.showNewPassword;
+    } else if (field === 'confirm') {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
+  }
+  
   updatePassword(): void {
-    if (this.changePasswordForm.newPassword !== this.changePasswordForm.confirmPassword) {
-      alert("Mật khẩu mới và xác nhận mật khẩu không khớp!");
+    // Reset lỗi trước
+    this.passwordValidationMessage = {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+  
+    // Kiểm tra không được để trống
+    if (!this.changePasswordForm.oldPassword) {
+      this.passwordValidationMessage.oldPassword = 'Vui lòng nhập mật khẩu cũ.';
+    }
+    if (!this.changePasswordForm.newPassword) {
+      this.passwordValidationMessage.newPassword = 'Vui lòng nhập mật khẩu mới.';
+    }
+    if (!this.changePasswordForm.confirmPassword) {
+      this.passwordValidationMessage.confirmPassword = 'Vui lòng xác nhận lại mật khẩu.';
+    }
+  
+    // Kiểm tra định dạng mật khẩu mới
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W])[^\s]{8,}$/;
+    if (this.changePasswordForm.newPassword && !passwordRegex.test(this.changePasswordForm.newPassword)) {
+      this.passwordValidationMessage.newPassword = 'Mật khẩu phải ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số hoặc ký tự đặc biệt, và không có khoảng trắng.';
+    }
+  
+    // Kiểm tra xác nhận mật khẩu
+    if (
+      this.changePasswordForm.newPassword &&
+      this.changePasswordForm.confirmPassword &&
+      this.changePasswordForm.newPassword !== this.changePasswordForm.confirmPassword
+    ) {
+      this.passwordValidationMessage.confirmPassword = 'Mật khẩu xác nhận không khớp.';
+    }
+  
+    // Nếu có lỗi thì dừng
+    if (
+      this.passwordValidationMessage.oldPassword ||
+      this.passwordValidationMessage.newPassword ||
+      this.passwordValidationMessage.confirmPassword
+    ) {
       return;
     }
-
+  
     const requestData = {
       id_account: this.accountsForm.id_account,
       oldPassword: this.changePasswordForm.oldPassword,
@@ -172,42 +341,4 @@ export class AccountsInfoComponent {
       }
     });
   }
-
-  closeModal(): void {
-    const modalElement = document.getElementById('changePasswordModal');
-    if (modalElement) {
-      const modalInstance = bootstrap.Modal.getInstance(modalElement);
-      modalInstance?.hide();
-    }
-  }
-
-  showOldPassword = false;
-  showNewPassword = false;
-  showConfirmPassword = false;
-
-  togglePasswordVisibility(type: string): void {
-    if (type === 'old') {
-      this.showOldPassword = !this.showOldPassword;
-    } else if (type === 'new') {
-      this.showNewPassword = !this.showNewPassword;
-    } else if (type === 'confirm') {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    }
-  }
-
-  get profileCompletion() {
-    if (!this.accountsForm) return 0;
-
-    let totalFields = 5;
-    let filledFields = 0;
-
-    if (this.accountsForm.username) filledFields++;
-    if (this.accountsForm.email) filledFields++;
-    if (this.accountsForm.fullname) filledFields++;
-    if (this.accountsForm.role) filledFields++;
-    if (this.accountsForm.status) filledFields++;
-
-    return Math.round((filledFields / totalFields) * 100);
-  }
-
 }

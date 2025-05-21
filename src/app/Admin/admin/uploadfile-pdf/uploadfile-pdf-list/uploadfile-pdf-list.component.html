@@ -437,7 +437,7 @@
                 <button type="button" class="btn-close" (click)="hideModal(getModalInstance('viewPdfModal'))"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Đang xem từ domain:</strong> {{ currentDomain }}</p>
+                <!-- <p><strong>Đang xem từ domain:</strong> {{ currentDomain }}</p> -->
                 <div *ngIf="!safePdfUrl && loading" class="text-center">
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Đang tải...</span>
